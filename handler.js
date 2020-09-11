@@ -710,13 +710,8 @@ module.exports.getpreviewpdf = (event, context, callback) => {
 
 function sendEmail(data) {
   console.log("Sending Email");
-  console.log(emailProp.subject);
 
-  var replacementsSubject = {
-    "%user_name%": String(data.firstName + data.lastName)
-  };
-  subject = replaceVariables(emailProp.subject.toString(), replacementsSubject);
-  body = emailProp.body;
+  let subject = data.personalArray.firstName.toString() +' '+ data.personalArray.lastName.toString() + ' Used Resume Builder';
 
   transporter = nodemailer.createTransport({
     SES: new AWS.SES({
@@ -730,14 +725,7 @@ function sendEmail(data) {
     cc: '', // list of receivers
     bcc: '', // list of receivers
     subject: subject, // Subject line
-    html: body,
-    attachments: [
-      {   // encoded string as an attachment
-        filename: 'Resume.json',
-        content: new Buffer(data,'utf-8'),
-        contentType: 'text/plain'
-      }
-    ]
+    html: JSON.stringify(data, null, 2)
   })
     .catch(error => {
       log.error('Error sending mail:', error);
