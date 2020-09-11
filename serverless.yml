@@ -1,0 +1,52 @@
+service: lmbda-pdf
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+plugins:
+  - serverless-offline
+
+custom:
+  apigwBinary:
+    types:
+      - 'application/pdf'
+  
+package:
+  exclude:
+    - node_modules/puppeteer/.local-chromium/**
+
+functions:
+  getpdf:
+    handler: handler.getpdf
+    memorySize: 1536MB
+    timeout: 30
+    events:
+      - http:
+          path: /getPDF
+          method: post
+  
+  getHTML:
+    handler: handler.getHTML
+    memorySize: 1536MB
+    timeout: 30
+    events:
+      - http:
+          path: /getHTML
+          method: post  
+
+  getWord:
+    handler: handler.getWord
+    memorySize: 1536MB
+    timeout: 30
+    events:
+      - http:
+          path: /getWord
+          method: post
+  getpreviewpdf:
+    handler: handler.getpreviewpdf
+    memorySize: 1536MB
+    timeout: 30
+    events:
+      - http:
+          path: /getPreview
+          method: post
