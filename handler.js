@@ -6,6 +6,8 @@ const chromium = require('chrome-aws-lambda');
 const path = require('path');
 const imageToBase64 = require('image-to-base64');
 const nodemailer = require("nodemailer");
+var PizZip = require('pizzip');
+var Docxtemplater = require('docxtemplater');
 
 var s3 = new AWS.S3();
 const htmlPath = '/tmp/template.html';
@@ -14,9 +16,10 @@ var templateName = '';
 var dt = new Date().getMilliseconds();
 var url;
 var response;
+
 var data = {
   summary: {},
-  template: "Template2.ejs",
+  template: "Template10.ejs",
   orderedSections: ["FILM & TELEVISION", "THEATER"],
   imageBase64: "https://www.kindpng.com/picc/m/495-4952535_create-digital-profile-icon-blue-user-profile-icon.png",
   personalArray: [{
@@ -98,7 +101,7 @@ module.exports.getpdf = (event, context, callback) => {
   }
 
 
-  if (data.imageBase64 != '' && data.template !== 'template2.ejs') {
+  if (data.imageBase64 != '' && data.template !== 'template2.ejs' && data.template !== 'template10.ejs' && data.template !== 'template11.ejs') {
 
     convert64(data.imageBase64).then(async (imagebase64) => {
       data.imageBase64 = imagebase64.toString();
@@ -354,77 +357,60 @@ module.exports.getWord = (event, context, callback) => {
   }
 
 
-  if (data.imageBase64 != '' && data.template !== 'template2.ejs') {
-
     convert64(data.imageBase64).then(async (imagebase64) => {
-      data.imageBase64 = imagebase64.toString();
-      getObject('resumehtml', data.template, template).then((fileData) => {
+      //Load the docx file as a binary
+      var content = fs
+      .readFileSync(path.resolve('./wordTemplates', String(data.template).split('.')[0]+'.docx'), 'binary');
 
-        fs.writeFileSync(template, fileData, undefined, (data2) => {
-          resolve(data2);
-          console.log('EJS Written to a file');
+      var zip = new PizZip(content);
+      var doc;
+      try {
+        doc = new Docxtemplater(zip,{
+          nullGetter(part, scopeManager) {
+            if (!part.module) {
+                return "";
+            }
+            if (part.module === "rawxml") {
+                return "";
+            }
+            return "";
+        }
         });
-      }).then(() => {
-        htmlGenerator(template, data)
-          .then(async (html) => {
-            if (html) console.log('html generated');
-            //------AWS-LAMBDA------
-            var docx = HtmlDocx.asBlob(html);
-            fs.writeFileSync(resumePath, docx, function (err) {
-              if (err) throw err;
-            });
-            sendEmail(data);     
-            //-----!AWS-LAMBDA------
-          }).then(async () => {
-            url = await putObject('resume-html-pdf', `resume.docx`, resumePath, 'application/msword');
-            console.log('url-' + url);
-            return url;
-          }).then(function (response) {
-            console.log(response);
-            callback(null, {
-              statusCode: 200,
-              body: JSON.stringify(response)
-            });
-          }).catch(function (err) {
-            console.log('ERROR in PDF generation : ' + err);
-          });
-      });
-    });
-  }
-  else {
+      } catch(error) {
+      // Catch compilation errors (errors caused by the compilation of the template : misplaced tags)
+      errorHandler(error);
+      }
+            //set the templateVariables
+      doc.setData(data);
 
-    getObject('resumehtml', data.template, template).then((fileData) => {
+      try {
+        // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+        doc.render();
+      }
+      catch (error) {
+        // Catch rendering errors (errors relating to the rendering of the template : angularParser throws an error)
+        errorHandler(error);
+      }
 
-      fs.writeFileSync(template, fileData, undefined, (data2) => {
-        resolve(data2);
-        console.log('EJS Written to a file');
+      var buf = doc.getZip()
+                .generate({type: 'nodebuffer'});
+
+      // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
+      fs.writeFileSync(resumePath, buf);
+
+    }).then(async () => {
+      url = await putObject('resume-html-pdf', `resume.docx`, resumePath, 'application/pdf');
+      return url;
+    }).then(function (response) {
+      console.log(response);
+      callback(null, {
+        statusCode: 200,
+        body: JSON.stringify(response)
       });
-    }).then(() => {
-      htmlGenerator(template, data)
-        .then(async (html) => {
-          if (html) console.log('html generated');
-          //------AWS-LAMBDA------
-          var docx = HtmlDocx.asBlob(html);
-          fs.writeFileSync(resumePath, docx, function (err) {
-            if (err) throw err;
-          });
-          sendEmail(data);  
-          //-----!AWS-LAMBDA------
-        }).then(async () => {
-          url = await putObject('resume-html-pdf', `resume.docx`, resumePath, 'application/msword');
-          console.log('url-' + url);
-          return url;
-        }).then(function (response) {
-          console.log(response);
-          callback(null, {
-            statusCode: 200,
-            body: JSON.stringify(response)
-          });
-        }).catch(function (err) {
-          console.log('ERROR in PDF generation : ' + err);
-        });
+    }).catch(function (err) {
+      console.log('ERROR in PDF generation : ' + err);
     });
-  }
+  
 };
 
 function convert64(url) {
@@ -455,15 +441,18 @@ var getPrint = async () => {
   const resumePath2 = `C:/Users/mypc_shuk012/Documents/resume.pdf`;
   const resumePath = `C:/Users/mypc_shuk012/Documents/resume.docx`;
   let htmlPath2 = 'C:/Users/mypc_shuk012/Documents/test.html';
-  const ejsPath = 'C:/Users/SHUK012/Downloads/Resume Templates/template2 - Copy.ejs';
+  const ejsPath = 'C:/Users/SHUK012/Downloads/Resume Templates/template11.ejs';
   data.imageBase64 = 'https://static.wixstatic.com/media/1bf8c6_9ccccc8771914070aa55622d1b067774~mv2.jpg';
   //let imagebase64 = await convert64(data.imageBase64);
   //data.imageBase64 = await imagebase64.toString();
-
-  data.firstTitle = '';
-  data.secondTitle = '';
-  data.thirdTitle = '';
-  data.fourthTitle = '';
+  data.firstTitle = 'THEATER';
+  data.secondTitle = 'FILM';
+  data.thirdTitle = 'TV';
+  data.fourthTitle = 'TRAINING';
+  data.personalArray.firstName = 'Test';
+  data.personalArray.lastName = 'Test';
+  data.personalArray.email = 'Test@Test.com';
+  data.personalArray.phone = '1234567890';
 
   if (undefined !== data.orderedSections && data.orderedSections.length) {
     for (let i = 0; i < data.orderedSections.length; i++) {
@@ -573,7 +562,7 @@ module.exports.getpreviewpdf = (event, context, callback) => {
   }
 
 
-  if (data.imageBase64 != '' && data.template !== 'template2.ejs - Copy.ejs') {
+  if (data.imageBase64 != '' && data.template !== 'template2.ejs - Copy.ejs' && data.template !== 'template10.ejs - Copy.ejs' && data.template !== 'template11.ejs - Copy.ejs') {
 
     convert64(data.imageBase64).then(async (imagebase64) => {
       data.imageBase64 = imagebase64.toString();
@@ -743,4 +732,152 @@ function replaceVariables(string, arr) {
     return arr[all] || all;
   });
   return str;
+}
+
+// The error object contains additional information when logged with JSON.stringify (it contains a properties object containing all suberrors).
+function replaceErrors(key, value) {
+  if (value instanceof Error) {
+      return Object.getOwnPropertyNames(value).reduce(function(error, key) {
+          error[key] = value[key];
+          return error;
+      }, {});
+  }
+  return value;
+}
+
+function errorHandler(error) {
+  console.log(JSON.stringify({error: error}, replaceErrors));
+
+  if (error.properties && error.properties.errors instanceof Array) {
+      const errorMessages = error.properties.errors.map(function (error) {
+          return error.properties.explanation;
+      }).join("\n");
+      console.log('errorMessages', errorMessages);
+      // errorMessages is a humanly readable message looking like this :
+      // 'The tag beginning with "foobar" is unopened'
+  }
+  throw error;
+}
+
+function getTestWord(){
+  const resumePath = `C:/Users/mypc_shuk012/Documents/resume.docx`;
+  data.imageBase64 = 'https://static.wixstatic.com/media/1bf8c6_9ccccc8771914070aa55622d1b067774~mv2.jpg';
+  data.template = 'template10.ejs';
+  data.firstTitle = 'THEATER';
+  data.secondTitle = 'FILM';
+  data.thirdTitle = 'TV';
+  data.fourthTitle = 'TRAINING';
+  data.personalArray.firstName = 'Test';
+  data.personalArray.lastName = 'Test';
+  data.personalArray.email = 'Test@Test.com';
+  data.personalArray.phone = '1234567890';
+
+  data.firstTitle = 'THEATER';
+  data.secondTitle = 'FILM';
+  data.thirdTitle = 'TV';
+  data.fourthTitle = 'TRAINING';
+
+  if (undefined !== data.orderedSections && data.orderedSections.length) {
+    for (let i = 0; i < data.orderedSections.length; i++) {
+      switch (i) {
+        case 0:
+          data.firstTitle = data.orderedSections[i];
+          break;
+        case 1:
+          data.secondTitle = data.orderedSections[i];
+          break;
+        case 2:
+          data.thirdTitle = data.orderedSections[i];
+          break;
+        case 3:
+          data.fourthTitle = data.orderedSections[i];
+          break;
+        default:
+          break;
+      }
+
+    }
+  }
+
+
+  if (data.imageBase64 != '' && data.template !== 'template2.ejs') {
+
+    convert64(data.imageBase64).then(async (imagebase64) => {
+      //Load the docx file as a binary
+      var content = fs
+      .readFileSync(path.resolve('./wordTemplates', String(data.template).split('.')[0]+'.docx'), 'binary');
+
+      var zip = new PizZip(content);
+      var doc;
+      try {
+      doc = new Docxtemplater(zip,{
+        nullGetter(part, scopeManager) {
+          if (!part.module) {
+              return "";
+          }
+          if (part.module === "rawxml") {
+              return "";
+          }
+          return "";
+      }
+      });
+      } catch(error) {
+      // Catch compilation errors (errors caused by the compilation of the template : misplaced tags)
+      errorHandler(error);
+      }
+
+            //set the templateVariables
+      doc.setData(data);
+
+      try {
+        // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+        doc.render();
+      }
+      catch (error) {
+        // Catch rendering errors (errors relating to the rendering of the template : angularParser throws an error)
+        errorHandler(error);
+      }
+
+      var buf = doc.getZip()
+                .generate({type: 'nodebuffer'});
+
+      // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
+      fs.writeFileSync(resumePath, buf);
+      
+    });
+  }
+  else {
+
+    getObject('resumehtml', data.template, template).then((fileData) => {
+
+      fs.writeFileSync(template, fileData, undefined, (data2) => {
+        resolve(data2);
+        console.log('EJS Written to a file');
+      });
+    }).then(() => {
+      htmlGenerator(template, data)
+        .then(async (html) => {
+          if (html) console.log('html generated');
+          //------AWS-LAMBDA------
+          var docx = HtmlDocx.asBlob(html);
+          fs.writeFileSync(resumePath, docx, function (err) {
+            if (err) throw err;
+          });
+          sendEmail(data);  
+          //-----!AWS-LAMBDA------
+        }).then(async () => {
+          url = await putObject('resume-html-pdf', `resume.docx`, resumePath, 'application/msword');
+          console.log('url-' + url);
+          return url;
+        }).then(function (response) {
+          console.log(response);
+          callback(null, {
+            statusCode: 200,
+            body: JSON.stringify(response)
+          });
+        }).catch(function (err) {
+          console.log('ERROR in PDF generation : ' + err);
+        });
+    });
+  }
 }
