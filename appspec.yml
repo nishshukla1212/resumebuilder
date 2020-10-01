@@ -1,0 +1,33 @@
+version: 0.0
+Resources:
+  - getpdf:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: "getpdf"
+        Alias: "getpdfAlias"
+        CurrentVersion: "1"
+        TargetVersion: "2"
+  - getHTML:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: "getHTML"
+        Alias: "getHTMLAlias"
+        CurrentVersion: "1"
+        TargetVersion: "2"  
+  - getWord:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: "getWord"
+        Alias: "getpdfAlias"
+        CurrentVersion: "1"
+        TargetVersion: "2"  
+  - getpreviewpdf:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: "getpreviewpdf"
+        Alias: "getpreviewpdfAlias"
+        CurrentVersion: "1"
+        TargetVersion: "2"
+Hooks:
+  - BeforeAllowTraffic: "LambdaFunctionToValidateBeforeTrafficShift"
+  - AfterAllowTraffic: "LambdaFunctionToValidateAfterTrafficShift"
