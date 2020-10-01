@@ -357,7 +357,7 @@ module.exports.getWord = (event, context, callback) => {
   }
 
 
-    convert64(data.imageBase64).then(async (imagebase64) => {
+    return new Promise((resolve,reject)=>{
       //Load the docx file as a binary
       var content = fs
       .readFileSync(path.resolve('./wordTemplates', String(data.template).split('.')[0]+'.docx'), 'binary');
@@ -397,9 +397,9 @@ module.exports.getWord = (event, context, callback) => {
 
       // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
       fs.writeFileSync(resumePath, buf);
-
+      resolve(resumePath);
     }).then(async () => {
-      url = await putObject('resume-html-pdf', `resume.docx`, resumePath, 'application/pdf');
+      url = await putObject('resume-html-pdf', `resume.docx`, resumePath, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       return url;
     }).then(function (response) {
       console.log(response);
