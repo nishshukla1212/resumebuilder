@@ -10,7 +10,6 @@ phases:
     - npm install --silent --no-progress
   build:
     commands:
-    - npm run-script lint
     - mkdir target/prod
     - serverless package --package target/prod --stage prod -v -r us-east-1
 
