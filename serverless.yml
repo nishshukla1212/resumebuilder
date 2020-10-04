@@ -20,7 +20,7 @@ package:
 functions:
   getpdf:
     handler: handler.getpdf
-    memorySize: 1536MB
+    memorySize: 1536
     timeout: 30
     events:
       - http:
@@ -29,7 +29,7 @@ functions:
   
   getHTML:
     handler: handler.getHTML
-    memorySize: 1536MB
+    memorySize: 1536
     timeout: 30
     events:
       - http:
@@ -38,7 +38,7 @@ functions:
 
   getWord:
     handler: handler.getWord
-    memorySize: 1536MB
+    memorySize: 1536
     timeout: 30
     events:
       - http:
