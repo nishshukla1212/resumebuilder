@@ -10,8 +10,12 @@ phases:
     - npm install --silent --no-progress
   build:
     commands:
+    - mkdir -p target/stg
+    - mkdir target/prod
+    - serverless package --package target/stg --stage stg -v -r us-east-1
     - serverless package --package target/prod --stage prod -v -r us-east-1
-    - serverless deploy --package target/prod --stage prod -v
+  post_build:
+    - serverless deploy prod -v
 
 artifacts:
   files:
