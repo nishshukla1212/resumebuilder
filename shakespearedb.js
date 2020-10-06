@@ -38,12 +38,12 @@ module.exports.getCharacters = (event, context, callback) => {
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
+      callback(null, {
+        statusCode: 200,
+        body: response
+      });
     });
     con.end();
-    callback(null, {
-      statusCode: 200,
-      body: response
-    });
   });
 };
 
