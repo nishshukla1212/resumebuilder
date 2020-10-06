@@ -18,6 +18,7 @@
     "html-docx-js": "^0.3.0",
     "image-manipulation": "0.0.4",
     "image-to-base64": "^2.1.0",
+    "mysql": "^2.18.1",
     "nodemailer": "^6.4.11",
     "pizzip": "^3.0.6",
     "puppeteer-core": "^3.3.0",

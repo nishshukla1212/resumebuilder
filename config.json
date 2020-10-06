@@ -1,0 +1,7 @@
+{
+  "host":"open-shakespeare-db.cykanzl4kcpx.us-east-2.rds.amazonaws.com",
+  "port":3306,
+  "user":"admin",
+  "password":"Davinci#1",
+  "database":"oss"
+}
