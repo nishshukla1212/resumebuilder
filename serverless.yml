@@ -60,7 +60,7 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /getCharacters/{workId}
+          path: /getCharacters
           method: get
           request:
             parameters: true
