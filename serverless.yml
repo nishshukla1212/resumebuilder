@@ -63,6 +63,4 @@ functions:
           path: /getCharacters/{workId}
           method: get
           request:
-            parameters:
-              paths:
-                id: true
+            parameters: true

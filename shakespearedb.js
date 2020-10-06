@@ -27,6 +27,7 @@ module.exports.getCharacters = (event, context, callback) => {
   let resultJSON = {};
   let resultarr = [];
   let response = '';
+  console.log(event);
   let workId = event.queryStringParameters.workId;
   let queryString = `select distinct ch.CharName from Characters ch ,Works wk where ch.Works = '${workId}'`;
   connect().then((con) => {
