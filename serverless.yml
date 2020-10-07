@@ -64,3 +64,12 @@ functions:
           method: get
           request:
             parameters: true
+
+  getWorks:
+    handler: shakespearedb.getWorks
+    memorySize: 1536
+    timeout: 30
+    events:
+      - http:
+          path: /getWorks
+          method: get

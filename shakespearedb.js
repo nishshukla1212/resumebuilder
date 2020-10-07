@@ -23,18 +23,42 @@ function connect() {
   });
 }
 
+module.exports.getWorks = (event, context, callback) => {
+  let resultJSON = {};
+  let resultarr = [];
+  let response = '';
+  console.log(event);
+  let workId = event.queryStringParameters.workId;
+  let queryString = `select distinct wk.Title, wk.WorkID from Works wk order by wk.Title`;
+  connect().then((con) => {
+    con.query(queryString, function (err, result, fields) {
+      if (err) throw err;
+      result.forEach(element => {
+        resultarr.push({label:element.Title,value:element.WorkID});
+      });
+      resultJSON.resultarr = resultarr;
+      response = JSON.stringify(resultJSON);
+      callback(null, {
+        statusCode: 200,
+        body: response
+      });
+    });
+    con.end();
+  });
+};
+
 module.exports.getCharacters = (event, context, callback) => {
   let resultJSON = {};
   let resultarr = [];
   let response = '';
   console.log(event);
   let workId = event.queryStringParameters.workId;
-  let queryString = `select distinct ch.CharName from Characters ch ,Works wk where ch.Works = '${workId}'`;
+  let queryString = `select distinct ch.CharName,ch.CharID from Characters ch ,Works wk where ch.Works = '${workId}'`;
   connect().then((con) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.CharName,value:element.CharName});
+        resultarr.push({label:element.CharName +' - '+ element.CharID,value:element.CharID});
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
