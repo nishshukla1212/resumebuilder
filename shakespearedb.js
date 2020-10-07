@@ -27,8 +27,6 @@ module.exports.getWorks = (event, context, callback) => {
   let resultJSON = {};
   let resultarr = [];
   let response = '';
-  console.log(event);
-  let workId = event.queryStringParameters.workId;
   let queryString = `select distinct wk.Title, wk.WorkID from Works wk order by wk.Title`;
   connect().then((con) => {
     con.query(queryString, function (err, result, fields) {
