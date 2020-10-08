@@ -78,7 +78,7 @@ module.exports.getChapters = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.Chapter +' - '+ element.Description,value:element.Chapter});
+        resultarr.push({label:element.Chapter.toString() +' - '+ element.Description,value:element.Chapter.toString()});
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
@@ -102,7 +102,7 @@ module.exports.getSections = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.Section, value:element.Section});
+        resultarr.push({label:element.Section.toString(), value:element.Section.toString()});
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
@@ -143,7 +143,7 @@ module.exports.getParagraphs = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.ParagraphNum, value:element.PlainText});
+        resultarr.push({label:element.ParagraphNum.toString(), value:element.PlainText});
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
