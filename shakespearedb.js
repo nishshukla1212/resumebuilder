@@ -124,10 +124,10 @@ module.exports.getParagraphs = (event, context, callback) => {
   let chapterID = undefined !== event.queryStringParameters.chapterID ? event.queryStringParameters.chapterID : '';
   let sectionID = undefined !== event.queryStringParameters.sectionID ? event.queryStringParameters.sectionID : '';
   let characterID = undefined !== event.queryStringParameters.characterID ? event.queryStringParameters.characterID : '';
-  let queryString = `select ph.ParagraphNum, ph.PlainText from Paragraphs ph where `;
+  let queryString = `select ph.ParagraphNum, ch.CharName, ph.PlainText from Paragraphs ph, Characters ch where ch.CharID = ph.ChatID `;
 
   if(workID.length){
-    queryString = queryString + `ph.WorkID = '${workID}' `;
+    queryString = queryString + `and ph.WorkID = '${workID}' `;
   }
   if(chapterID.length){
     queryString = queryString + `and ph.Chapter = ${chapterID} `;
@@ -143,7 +143,7 @@ module.exports.getParagraphs = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.ParagraphNum.toString(), value:element.PlainText});
+        resultarr.push({label:element.ParagraphNum.toString(), character:element.CharName, value:element.PlainText});
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
