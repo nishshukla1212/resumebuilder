@@ -1,6 +1,4 @@
 const mysql = require('mysql');
-const AWS = require('aws-sdk');
-const path = require('path');
 
 var options = require('./options');
 
@@ -51,12 +49,101 @@ module.exports.getCharacters = (event, context, callback) => {
   let response = '';
   console.log(event);
   let workId = event.queryStringParameters.workId;
-  let queryString = `select distinct ch.CharName,ch.CharID from Characters ch ,Works wk where ch.Works = '${workId}'`;
+  let queryString = `select distinct ch.CharName,ch.CharID, ch.Description from Characters ch ,Works wk where ch.Works = '${workId}'`;
   connect().then((con) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.CharName +' - '+ element.CharID,value:element.CharID});
+        resultarr.push({label:element.CharName + element.Description ? ' - '+ element.Description : '',value:element.CharID});
+      });
+      resultJSON.resultarr = resultarr;
+      response = JSON.stringify(resultJSON);
+      callback(null, {
+        statusCode: 200,
+        body: response
+      });
+    });
+    con.end();
+  });
+};
+
+module.exports.getChapters = (event, context, callback) => {
+  let resultJSON = {};
+  let resultarr = [];
+  let response = '';
+  console.log(event);
+  let workId = event.queryStringParameters.workId;
+  let queryString = `select distinct ch.Chapter,ch.Description from Chapters ch ,Works wk where ch.Works = '${workId}'`;
+  connect().then((con) => {
+    con.query(queryString, function (err, result, fields) {
+      if (err) throw err;
+      result.forEach(element => {
+        resultarr.push({label:element.Chapter +' - '+ element.Description,value:element.Chapter});
+      });
+      resultJSON.resultarr = resultarr;
+      response = JSON.stringify(resultJSON);
+      callback(null, {
+        statusCode: 200,
+        body: response
+      });
+    });
+    con.end();
+  });
+};
+
+module.exports.getSections = (event, context, callback) => {
+  let resultJSON = {};
+  let resultarr = [];
+  let response = '';
+  console.log(event);
+  let chapterID = event.queryStringParameters.chapter;
+  let queryString = `select distinct ch.Section from Chapters ch where ch.chapter = '${chapter}'`;
+  connect().then((con) => {
+    con.query(queryString, function (err, result, fields) {
+      if (err) throw err;
+      result.forEach(element => {
+        resultarr.push({label:element.Section, value:element.Section});
+      });
+      resultJSON.resultarr = resultarr;
+      response = JSON.stringify(resultJSON);
+      callback(null, {
+        statusCode: 200,
+        body: response
+      });
+    });
+    con.end();
+  });
+};
+
+module.exports.getParagraphs = (event, context, callback) => {
+  let resultJSON = {};
+  let resultarr = [];
+  let response = '';
+  console.log(event);
+  let workID = undefined !== event.queryStringParameters.workID ? event.queryStringParameters.workID : '';
+  let chapterID = undefined !== event.queryStringParameters.chapterID ? event.queryStringParameters.chapterID : '';
+  let sectionID = undefined !== event.queryStringParameters.sectionID ? event.queryStringParameters.sectionID : '';
+  let characterID = undefined !== event.queryStringParameters.characterID ? event.queryStringParameters.characterID : '';
+  let queryString = `select ph.ParagraphNum, ph.PlainText from Paragraphs ph where `;
+
+  if(workID.length){
+    queryString = queryString + `ph.workID = '${workID}' `;
+  }
+  if(chapterID.length){
+    queryString = queryString + `and ph.chapterID = '${chapterID}' `;
+  }  
+  if(sectionID.length){
+    queryString = queryString + `and ph.sectionID = '${sectionID}' `;
+  }
+  if(characterID.length){
+    queryString = queryString + `and ph.characterID = '${characterID}' `;
+  }
+
+  connect().then((con) => {
+    con.query(queryString, function (err, result, fields) {
+      if (err) throw err;
+      result.forEach(element => {
+        resultarr.push({label:element.ParagraphNum, value:element.PlainText});
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);

@@ -73,3 +73,36 @@ functions:
       - http:
           path: /getWorks
           method: get
+
+  getChapters:
+    handler: shakespearedb.getChapters
+    memorySize: 1536
+    timeout: 30
+    events:
+      - http:
+          path: /getChapters
+          method: get
+          request:
+            parameters: true
+
+  getSections:
+    handler: shakespearedb.getSections
+    memorySize: 1536
+    timeout: 30
+    events:
+      - http:
+          path: /getSections
+          method: get
+          request:
+            parameters: true
+
+  getParagraphs:
+    handler: shakespearedb.getParagraphs
+    memorySize: 1536
+    timeout: 30
+    events:
+      - http:
+          path: /getParagraphs
+          method: get
+          request:
+            parameters: true
