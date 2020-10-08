@@ -73,7 +73,7 @@ module.exports.getChapters = (event, context, callback) => {
   let response = '';
   console.log(event);
   let workId = event.queryStringParameters.workId;
-  let queryString = `select distinct ch.Chapter,ch.Description from Chapters ch ,Works wk where ch.Works = '${workId}'`;
+  let queryString = `select distinct ch.Chapter,ch.Description from Chapters ch ,Works wk where ch.WorkID = '${workId}'`;
   connect().then((con) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
@@ -96,7 +96,7 @@ module.exports.getSections = (event, context, callback) => {
   let resultarr = [];
   let response = '';
   console.log(event);
-  let chapterID = event.queryStringParameters.chapter;
+  let chapter = event.queryStringParameters.chapter;
   let queryString = `select distinct ch.Section from Chapters ch where ch.chapter = '${chapter}'`;
   connect().then((con) => {
     con.query(queryString, function (err, result, fields) {
@@ -130,13 +130,13 @@ module.exports.getParagraphs = (event, context, callback) => {
     queryString = queryString + `ph.workID = '${workID}' `;
   }
   if(chapterID.length){
-    queryString = queryString + `and ph.chapterID = '${chapterID}' `;
+    queryString = queryString + `and ph.chapter = '${chapterID}' `;
   }  
   if(sectionID.length){
-    queryString = queryString + `and ph.sectionID = '${sectionID}' `;
+    queryString = queryString + `and ph.section = '${sectionID}' `;
   }
   if(characterID.length){
-    queryString = queryString + `and ph.characterID = '${characterID}' `;
+    queryString = queryString + `and ph.charID = '${characterID}' `;
   }
 
   connect().then((con) => {
