@@ -130,10 +130,10 @@ module.exports.getParagraphs = (event, context, callback) => {
     queryString = queryString + `ph.workID = '${workID}' `;
   }
   if(chapterID.length){
-    queryString = queryString + `and ph.chapter = '${chapterID}' `;
+    queryString = queryString + `and ph.chapter = ${chapterID} `;
   }  
   if(sectionID.length){
-    queryString = queryString + `and ph.section = '${sectionID}' `;
+    queryString = queryString + `and ph.section = ${sectionID} `;
   }
   if(characterID.length){
     queryString = queryString + `and ph.charID = '${characterID}' `;
