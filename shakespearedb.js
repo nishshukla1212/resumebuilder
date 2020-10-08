@@ -124,7 +124,7 @@ module.exports.getParagraphs = (event, context, callback) => {
   let chapterID = undefined !== event.queryStringParameters.chapterID ? event.queryStringParameters.chapterID : '';
   let sectionID = undefined !== event.queryStringParameters.sectionID ? event.queryStringParameters.sectionID : '';
   let characterID = undefined !== event.queryStringParameters.characterID ? event.queryStringParameters.characterID : '';
-  let queryString = `select ph.ParagraphNum, ch.CharName, ph.PlainText from Paragraphs ph, Characters ch where ch.CharID = ph.ChatID `;
+  let queryString = `select ph.ParagraphNum, ch.CharName, ph.PlainText from Paragraphs ph, Characters ch where ch.CharID = ph.CharID `;
 
   if(workID.length){
     queryString = queryString + `and ph.WorkID = '${workID}' `;
