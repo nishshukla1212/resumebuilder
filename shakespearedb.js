@@ -127,16 +127,16 @@ module.exports.getParagraphs = (event, context, callback) => {
   let queryString = `select ph.ParagraphNum, ph.PlainText from Paragraphs ph where `;
 
   if(workID.length){
-    queryString = queryString + `ph.workID = '${workID}' `;
+    queryString = queryString + `ph.WorkID = '${workID}' `;
   }
   if(chapterID.length){
-    queryString = queryString + `and ph.chapter = ${chapterID} `;
+    queryString = queryString + `and ph.Chapter = ${chapterID} `;
   }  
   if(sectionID.length){
-    queryString = queryString + `and ph.section = ${sectionID} `;
+    queryString = queryString + `and ph.Section = ${sectionID} `;
   }
   if(characterID.length){
-    queryString = queryString + `and ph.charID = '${characterID}' `;
+    queryString = queryString + `and ph.CharID = '${characterID}' `;
   }
 
   connect().then((con) => {
