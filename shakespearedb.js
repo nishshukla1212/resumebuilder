@@ -98,7 +98,7 @@ module.exports.getSections = (event, context, callback) => {
   console.log(event);
   let chapter = event.queryStringParameters.chapter;
   let workID = event.queryStringParameters.workID;
-  let queryString = `select ch.Section from Chapters ch where ch.chapter = '${chapter}' and WorkID = '${workID}`;
+  let queryString = `select ch.Section from Chapters ch where ch.Chapter = '${chapter}' and ch.WorkID = '${workID}`;
   connect().then((con) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
