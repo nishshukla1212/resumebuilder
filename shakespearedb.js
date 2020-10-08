@@ -54,7 +54,7 @@ module.exports.getCharacters = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.CharName + element.Description ? ' - '+ element.Description : '',value:element.CharID});
+        resultarr.push({label:element.CharName + (element.Description ? ' - '+ element.Description : ''),value:element.CharID});
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
