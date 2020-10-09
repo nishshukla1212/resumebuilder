@@ -144,7 +144,7 @@ module.exports.getParagraphs = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.ParagraphNum.toString(), character:element.CharName, value:element.PlainText});
+        resultarr.push({paragraphNumber:element.ParagraphNum.toString(), character:element.CharName, paragraph:element.PlainText});
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
