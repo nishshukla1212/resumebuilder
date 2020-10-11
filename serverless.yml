@@ -113,5 +113,5 @@ functions:
     timeout: 30
     events:
       - http:
-          path: /getWord
+          path: /saveView
           method: post
