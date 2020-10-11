@@ -106,3 +106,12 @@ functions:
           method: get
           request:
             parameters: true
+
+  saveView:
+    handler: shakespearedb.saveView
+    memorySize: 1536
+    timeout: 30
+    events:
+      - http:
+          path: /getWord
+          method: post

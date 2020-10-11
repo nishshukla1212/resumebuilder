@@ -2,6 +2,9 @@ const mysql = require('mysql');
 
 var options = require('./options');
 
+const carbone = require('carbone-sdk')('test_eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzMjg5IiwiYXVkIjoiY2FyYm9uZSIsImV4cCI6MjIzMzEwNTk5NywiZGF0YSI6eyJpZEFjY291bnQiOjMyODl9fQ.ACjfTi1JH-ESGghkQIP5Fsm3RaQMpsvmjshPPpuKBFrPji2Veu83B0HOP3nMZOWqbSoaTLnLsgiVEj_LxCZhucMRAdGGnEQSLhX73s93BDRj3iWwRiOm375lHpNTvDhqTu9WXo8GMBu54a5_2su9BdG90oNB8B66cSRErhhpzzn4MCXU');
+
+
 var loginData = {
   host: options.storageConfig.host,
   user: options.storageConfig.user,
@@ -30,7 +33,7 @@ module.exports.getWorks = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.Title,value:element.WorkID});
+        resultarr.push({ label: element.Title, value: element.WorkID });
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
@@ -54,7 +57,7 @@ module.exports.getCharacters = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.CharName + (element.Description ? ' - '+ element.Description : ''),value:element.CharID});
+        resultarr.push({ label: element.CharName + (element.Description ? ' - ' + element.Description : ''), value: element.CharID });
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
@@ -78,7 +81,7 @@ module.exports.getChapters = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.Chapter.toString() +' - '+ element.Description,value:element.Chapter.toString()});
+        resultarr.push({ label: element.Chapter.toString() + ' - ' + element.Description, value: element.Chapter.toString() });
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
@@ -103,7 +106,7 @@ module.exports.getSections = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({label:element.Section.toString(), value:element.Section.toString()});
+        resultarr.push({ label: element.Section.toString(), value: element.Section.toString() });
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
@@ -127,16 +130,16 @@ module.exports.getParagraphs = (event, context, callback) => {
   let characterID = undefined !== event.queryStringParameters.characterID ? event.queryStringParameters.characterID : '';
   let queryString = `select ph.ParagraphNum, ch.CharName, ph.PlainText from Paragraphs ph, Characters ch where ch.CharID = ph.CharID `;
 
-  if(workID.length){
+  if (workID.length) {
     queryString = queryString + `and ph.WorkID = '${workID}' `;
   }
-  if(chapterID.length){
+  if (chapterID.length) {
     queryString = queryString + `and ph.Chapter = ${chapterID} `;
-  }  
-  if(sectionID.length){
+  }
+  if (sectionID.length) {
     queryString = queryString + `and ph.Section = ${sectionID} `;
   }
-  if(characterID.length){
+  if (characterID.length) {
     queryString = queryString + `and ph.CharID = '${characterID}' `;
   }
 
@@ -144,7 +147,8 @@ module.exports.getParagraphs = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        resultarr.push({paragraphNumber:element.ParagraphNum.toString(), character:element.CharName, paragraph:element.PlainText});
+        let paraText = String(element.PlainText).trimLeft().trimRight();
+        resultarr.push({ paragraphNumber: element.ParagraphNum.toString(), character: element.CharName, paragraph: paraText });
       });
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
@@ -157,21 +161,60 @@ module.exports.getParagraphs = (event, context, callback) => {
   });
 };
 
-function test() {
-  let workId = 'macbeth';
-  let resultarr = [];
-  let resultJSON = {};
-  let queryString = `select distinct ch.CharName from Characters ch ,Works wk where ch.Works = '${workId}'`;
-  connect().then((con) => {
-    con.query(queryString, function (err, result, fields) {
-      if (err) {con.end(); throw err;}
-      result.forEach(element => {
-        resultarr.push({"name":element.CharName});
-      });
-      resultJSON.resultarr = resultarr;
-      let response = JSON.stringify(resultJSON);
-      con.end();
+module.exports.saveView = (event, context, callback) => {
+  carbone.setOptions({
+    isReturningBuffer: false,
+    convertTo: 'pdf'
+  });
+
+  const dataToRender = {
+    convertTo: 'pdf'
+  };
+
+  dataToRender.data = JSON.parse(event.body);
+
+  carbone.render('85ec05e0ef678e73ae72c181a205cb443ca27d5aaef470275e4e32f52b83e5da', dataToRender, (err, downloadLink, filename) => {
+    console.log(err);
+    console.log(downloadLink);
+    resultarr.push({ paragraphNumber: element.ParagraphNum.toString(), character: element.CharName, paragraph: paraText });
+    resultJSON.resultarr = resultarr;
+    response = JSON.stringify(resultJSON);
+    callback(null, {
+      statusCode: 200,
+      body: response
     });
-    
+  });
+};
+
+function test() {
+  carbone.setOptions({
+    isReturningBuffer: false,
+    convertTo: 'pdf'
+  });
+
+  const dataToRender = {
+    data: {
+      result: [
+        {
+          paragraphNumber: "4",
+          character: "Bertram",
+          paragraph: "And I in going, madam, weep o'er my father's death\n[p]anew: but I must attend his majesty's command, to\n[p]whom I am now in ward, evermore in subjection.\n"
+        },
+        {
+          paragraphNumber: "31",
+          character: "Bertram",
+          paragraph: "What is it, my good lord, the king languishes of?\n"
+        }
+      ],
+      watermark: "we"
+    },
+    convertTo: 'pdf'
+  };
+
+  carbone.render('85ec05e0ef678e73ae72c181a205cb443ca27d5aaef470275e4e32f52b83e5da', dataToRender, (err, downloadLink, filename) => {
+    console.log(err);
+    console.log(downloadLink);
   });
 }
+
+test();
