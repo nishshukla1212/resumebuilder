@@ -162,6 +162,9 @@ module.exports.getParagraphs = (event, context, callback) => {
 };
 
 module.exports.saveView = (event, context, callback) => {
+  let resultJSON = {};
+  let resultarr = [];
+  let response = '';
   carbone.setOptions({
     isReturningBuffer: false,
     convertTo: 'pdf'
