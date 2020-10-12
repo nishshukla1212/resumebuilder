@@ -31,7 +31,7 @@ module.exports.getWorks = (event, context, callback) => {
   let queryString = '';
   let isSonnets = event.queryStringParameters.isSonnets;
   if(isSonnets == "false"){
-    queryString = `select distinct wk.Title, wk.WorkID from Works wk order by wk.Title`;
+    queryString = `select distinct wk.Title, wk.WorkID from Works wk where wk.WorkID != 'sonnets' order by wk.Title`;
   }else{
     queryString = `select distinct wk.Title, wk.WorkID from Works wk where wk.WorkID = 'sonnets' order by wk.Title`;
   }
