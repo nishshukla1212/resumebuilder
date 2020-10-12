@@ -177,7 +177,7 @@ module.exports.saveView = (event, context, callback) => {
   dataToRender.data = JSON.parse(event.body);
   console.log(dataToRender);
 
-  carbone.render('f5ca035577176b07dfd6a065c2ce8db025f4a892aeee613b196d4f10286f6016', dataToRender, (err, downloadLink, filename) => {
+  carbone.render('0d24376f2af28d26af2913071168a600a80467ac28b2c516a2c9ec62c6af2c82', dataToRender, (err, downloadLink, filename) => {
     resultarr.push({url:downloadLink.toString()});
     resultJSON.resultarr = resultarr;
     response = JSON.stringify(resultJSON);
