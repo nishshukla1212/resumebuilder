@@ -28,7 +28,13 @@ module.exports.getWorks = (event, context, callback) => {
   let resultJSON = {};
   let resultarr = [];
   let response = '';
-  let queryString = `select distinct wk.Title, wk.WorkID from Works wk order by wk.Title`;
+  let queryString = '';
+  let isSonnets = event.queryStringParameters.isSonnets;
+  if(!isSonnets){
+    queryString = `select distinct wk.Title, wk.WorkID from Works wk order by wk.Title`;
+  }else{
+    queryString = `select distinct wk.Title, wk.WorkID from Works wk where wk.WorkID = 'sonnets' order by wk.Title`;
+  }
   connect().then((con) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
@@ -80,9 +86,15 @@ module.exports.getChapters = (event, context, callback) => {
   connect().then((con) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
-      result.forEach(element => {
-        resultarr.push({ label: element.Chapter.toString() + ' - ' + element.Description, value: element.Chapter.toString() });
-      });
+      if(workId !== 'sonnets'){
+        result.forEach(element => {
+          resultarr.push({ label: element.Chapter.toString() + ' - ' + element.Description, value: element.Chapter.toString() });
+        });
+      }else{
+        result.forEach(element => {
+          resultarr.push({ label: element.Chapter.toString(), value: element.Chapter.toString() });
+        });
+      }
       resultJSON.resultarr = resultarr;
       response = JSON.stringify(resultJSON);
       callback(null, {
