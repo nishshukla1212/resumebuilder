@@ -160,7 +160,7 @@ module.exports.getParagraphs = (event, context, callback) => {
       if (err) throw err;
       result.forEach(element => {
         let paraText = String(element.PlainText).replace(/\[[p]]/g,"");
-        paraText = String(paraText).replace(/\[\n]/g,"\\n");
+        paraText = String(paraText).replace(/\\n/g,"\\\\n");
         resultarr.push({ paragraphNumber: element.ParagraphNum.toString(), character: element.CharName, paragraph: paraText });
       });
       resultJSON.resultarr = resultarr;
