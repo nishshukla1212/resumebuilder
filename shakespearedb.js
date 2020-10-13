@@ -186,7 +186,6 @@ module.exports.saveView = (event, context, callback) => {
   const dataToRender = {
     convertTo: 'pdf'
   };
-  console.log(event.body);
   dataToRender.data = JSON.parse(event.body);
   console.log(dataToRender);
 
@@ -202,32 +201,32 @@ module.exports.saveView = (event, context, callback) => {
 };
 
 function test() {
-  carbone.setOptions({
-    isReturningBuffer: false,
-    convertTo: 'pdf'
-  });
+  let resultJSON = {};
+  let resultarr = [];
+  let response = '';
+  let queryString = `select ph.ParagraphNum, ch.CharName, ph.PlainText from Paragraphs ph, Characters ch where ch.CharID = ph.CharID `;
 
-  const dataToRender = {
-    data: {
-      result: [
-        {
-          paragraphNumber: "4",
-          character: "Bertram",
-          paragraph: "And I in going, madam, weep o'er my father's death\n[p]anew: but I must attend his majesty's command, to\n[p]whom I am now in ward, evermore in subjection.\n"
-        },
-        {
-          paragraphNumber: "31",
-          character: "Bertram",
-          paragraph: "What is it, my good lord, the king languishes of?\n"
-        }
-      ],
-      watermark: "we"
-    },
-    convertTo: 'pdf'
-  };
+    queryString = queryString + `and ph.WorkID = 'sonnets' `;
+  
 
-  carbone.render('85ec05e0ef678e73ae72c181a205cb443ca27d5aaef470275e4e32f52b83e5da', dataToRender, (err, downloadLink, filename) => {
-    console.log(err);
-    console.log(downloadLink);
+    queryString = queryString + `and ph.Chapter = 1 `;
+
+    queryString = queryString + `and ph.Section = 1 `;
+  
+
+  connect().then((con) => {
+    con.query(queryString, function (err, result, fields) {
+      if (err) throw err;
+      result.forEach(element => {
+        let paraText = String(element.PlainText).replace(/\[[p]]/g,"");
+        paraText = String(paraText).replace(/\\n/g,"\\\\n");
+        console.log(paraText);
+        resultarr.push({ paragraphNumber: element.ParagraphNum.toString(), character: element.CharName, paragraph: paraText });
+      });
+      resultJSON.resultarr = resultarr;
+      response = resultJSON;
+      console.log(response);
+    });
+    con.end();
   });
 }
