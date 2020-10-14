@@ -159,8 +159,8 @@ module.exports.getParagraphs = (event, context, callback) => {
     con.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
-        let paraText = String(element.PlainText).replace(/\[[p]]/g,"");
-        paraText = String(paraText).replace(/\\n/g,"\\\\n");
+        let paraText = String(element.PlainText).replace(/\[[p]]/g,"<br>");
+        paraText = String(paraText).replace(/\\n/g,"");
         resultarr.push({ paragraphNumber: element.ParagraphNum.toString(), character: element.CharName, paragraph: paraText });
       });
       resultJSON.resultarr = resultarr;
