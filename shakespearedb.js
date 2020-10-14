@@ -180,7 +180,7 @@ module.exports.saveView = (event, context, callback) => {
   let response = '';
   carbone.setOptions({
     isReturningBuffer: false,
-    convertTo: 'pdf'
+    convertTo: 'pdf',
   });
 
   const dataToRender = {
@@ -189,7 +189,7 @@ module.exports.saveView = (event, context, callback) => {
   dataToRender.data = JSON.parse(event.body);
   console.log(dataToRender);
 
-  carbone.render('0d24376f2af28d26af2913071168a600a80467ac28b2c516a2c9ec62c6af2c82', dataToRender, (err, downloadLink, filename) => {
+  carbone.render('5aa6ab79d765a8baa8284e24f9ddc4e2f155257e9b92b264328bf43618b83cf4', dataToRender, (err, downloadLink, filename) => {
     resultarr.push({url:downloadLink.toString()});
     resultJSON.resultarr = resultarr;
     response = JSON.stringify(resultJSON);
