@@ -203,8 +203,7 @@ module.exports.getParagraphsRepeater = (event, context, callback) => {
       if (err) throw err;
       let i = 0;
       result.forEach(element => {
-        let paraText = String(element.PlainText).replace(/\[[p]]/g,"<br>");
-        paraText = String(paraText).replace(/\\n/g,"");
+        let paraText = String(element.PlainText).replace(/\\n/g,"");
         resultarr.push({ _id: i.toString(), paragraphNumber: element.ParagraphNum.toString(), character: element.CharName, paragraph: paraText });
         i++;
       });
