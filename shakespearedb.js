@@ -174,6 +174,51 @@ module.exports.getParagraphs = (event, context, callback) => {
   });
 };
 
+module.exports.getParagraphsRepeater = (event, context, callback) => {
+  let resultJSON = {};
+  let resultarr = [];
+  let response = '';
+  console.log(event);
+  let workID = undefined !== event.queryStringParameters.workID ? event.queryStringParameters.workID : '';
+  let chapterID = undefined !== event.queryStringParameters.chapterID ? event.queryStringParameters.chapterID : '';
+  let sectionID = undefined !== event.queryStringParameters.sectionID ? event.queryStringParameters.sectionID : '';
+  let characterID = undefined !== event.queryStringParameters.characterID ? event.queryStringParameters.characterID : '';
+  let queryString = `select ph.ParagraphNum, ch.CharName, ph.PlainText from Paragraphs ph, Characters ch where ch.CharID = ph.CharID `;
+
+  if (workID.length) {
+    queryString = queryString + `and ph.WorkID = '${workID}' `;
+  }
+  if (chapterID.length) {
+    queryString = queryString + `and ph.Chapter = ${chapterID} `;
+  }
+  if (sectionID.length) {
+    queryString = queryString + `and ph.Section = ${sectionID} `;
+  }
+  if (characterID.length) {
+    queryString = queryString + `and ph.CharID = '${characterID}' `;
+  }
+
+  connect().then((con) => {
+    con.query(queryString, function (err, result, fields) {
+      if (err) throw err;
+      let i = 0;
+      result.forEach(element => {
+        let paraText = String(element.PlainText).replace(/\[[p]]/g,"<br>");
+        paraText = String(paraText).replace(/\\n/g,"");
+        resultarr.push({ _id: i.toString(), paragraphNumber: element.ParagraphNum.toString(), character: element.CharName, paragraph: paraText });
+        i++;
+      });
+      resultJSON.resultarr = resultarr;
+      response = JSON.stringify(resultJSON);
+      callback(null, {
+        statusCode: 200,
+        body: response
+      });
+    });
+    con.end();
+  });
+};
+
 module.exports.saveView = (event, context, callback) => {
   let resultJSON = {};
   let resultarr = [];
