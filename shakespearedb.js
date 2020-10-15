@@ -28,6 +28,7 @@ function connect() {
 }
 
 module.exports.getWorks = (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   let resultJSON = {};
   let resultarr = [];
   let response = '';
@@ -54,6 +55,7 @@ module.exports.getWorks = (event, context, callback) => {
 };
 
 module.exports.getCharacters = (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   let resultJSON = {};
   let resultarr = [];
   let response = '';
@@ -76,6 +78,7 @@ module.exports.getCharacters = (event, context, callback) => {
 };
 
 module.exports.getChapters = (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   let resultJSON = {};
   let resultarr = [];
   let response = '';
@@ -104,6 +107,7 @@ module.exports.getChapters = (event, context, callback) => {
 };
 
 module.exports.getSections = (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   let resultJSON = {};
   let resultarr = [];
   let response = '';
@@ -127,6 +131,7 @@ module.exports.getSections = (event, context, callback) => {
 };
 
 module.exports.getParagraphs = (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   let resultJSON = {};
   let resultarr = [];
   let response = '';
@@ -168,6 +173,7 @@ module.exports.getParagraphs = (event, context, callback) => {
 };
 
 module.exports.getParagraphsRepeater = (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   let resultJSON = {};
   let resultarr = [];
   let response = '';
