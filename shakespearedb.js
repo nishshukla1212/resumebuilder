@@ -216,6 +216,7 @@ module.exports.getParagraphsRepeater = (event, context, callback) => {
 };
 
 module.exports.saveView = (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   let resultJSON = {};
   let resultarr = [];
   let response = '';
