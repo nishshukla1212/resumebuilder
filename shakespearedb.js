@@ -12,19 +12,19 @@ var loginData = {
   database: options.storageConfig.database
 };
 
-var con = Promise.resolve(connect());
+const con = connect().then((conn)=>{return conn;});
 
 
 function connect() {
-  return new Promise((resolve, reject) => {
-    let con = mysql.createConnection(loginData);
+    let conn = mysql.createConnection(loginData);
     console.log("connecting");
-    con.connect(function (err) {
-      if (err) rejec(err);
+    return new Promise((resolve,reject)=>{
+      conn.connect(function (err) {
+      if (err) reject(err);
       console.log("Connected!");
-      resolve(con);
-    });
-  });
+      resolve(conn);
+  })
+});
 }
 
 module.exports.getWorks = (event, context, callback) => {
@@ -38,7 +38,7 @@ module.exports.getWorks = (event, context, callback) => {
   } else {
     queryString = `select distinct wk.Title, wk.WorkID from Works wk where wk.WorkID = 'sonnets' order by wk.Title`;
   }
-  con.query(queryString, function (err, result, fields) {
+  con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
     if (err) throw err;
     result.forEach(element => {
       resultarr.push({ label: element.Title, value: element.WorkID });
@@ -50,6 +50,7 @@ module.exports.getWorks = (event, context, callback) => {
       body: response
     });
   });
+});
 };
 
 module.exports.getCharacters = (event, context, callback) => {
@@ -59,7 +60,7 @@ module.exports.getCharacters = (event, context, callback) => {
   console.log(event);
   let workId = event.queryStringParameters.workId;
   let queryString = `select distinct ch.CharName,ch.CharID, ch.Description from Characters ch ,Works wk where ch.Works = '${workId}'`;
-  con.query(queryString, function (err, result, fields) {
+  con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
     if (err) throw err;
     result.forEach(element => {
       resultarr.push({ label: element.CharName + (element.Description ? ' - ' + element.Description : ''), value: element.CharID });
@@ -71,6 +72,7 @@ module.exports.getCharacters = (event, context, callback) => {
       body: response
     });
   });
+});
 };
 
 module.exports.getChapters = (event, context, callback) => {
@@ -80,7 +82,7 @@ module.exports.getChapters = (event, context, callback) => {
   console.log(event);
   let workId = event.queryStringParameters.workId;
   let queryString = `select distinct ch.Chapter,ch.Description from Chapters ch ,Works wk where ch.WorkID = '${workId}'`;
-  con.query(queryString, function (err, result, fields) {
+  con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
     if (err) throw err;
     if (workId !== 'sonnets') {
       result.forEach(element => {
@@ -98,6 +100,7 @@ module.exports.getChapters = (event, context, callback) => {
       body: response
     });
   });
+});
 };
 
 module.exports.getSections = (event, context, callback) => {
@@ -108,7 +111,7 @@ module.exports.getSections = (event, context, callback) => {
   let chapter = event.queryStringParameters.chapter;
   let workID = event.queryStringParameters.workID;
   let queryString = `select ch.Section from Chapters ch where ch.Chapter = ${chapter} and ch.WorkID = '${workID}'`;
-  con.query(queryString, function (err, result, fields) {
+  con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
     if (err) throw err;
     result.forEach(element => {
       resultarr.push({ label: element.Section.toString(), value: element.Section.toString() });
@@ -120,6 +123,7 @@ module.exports.getSections = (event, context, callback) => {
       body: response
     });
   });
+});
 };
 
 module.exports.getParagraphs = (event, context, callback) => {
@@ -146,7 +150,7 @@ module.exports.getParagraphs = (event, context, callback) => {
     queryString = queryString + `and ph.CharID = '${characterID}' `;
   }
 
-  con.query(queryString, function (err, result, fields) {
+  con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
     if (err) throw err;
     result.forEach(element => {
       let paraText = String(element.PlainText).replace(/\[[p]]/g, "<br>");
@@ -160,6 +164,7 @@ module.exports.getParagraphs = (event, context, callback) => {
       body: response
     });
   });
+});
 };
 
 module.exports.getParagraphsRepeater = (event, context, callback) => {
@@ -185,7 +190,7 @@ module.exports.getParagraphsRepeater = (event, context, callback) => {
     queryString = queryString + `and ph.CharID = '${characterID}' `;
   }
 
-  con.query(queryString, function (err, result, fields) {
+  con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
     if (err) throw err;
     let i = 0;
     result.forEach(element => {
@@ -201,6 +206,7 @@ module.exports.getParagraphsRepeater = (event, context, callback) => {
       body: response
     });
   });
+});
 };
 
 module.exports.saveView = (event, context, callback) => {
@@ -242,9 +248,7 @@ function test() {
 
   queryString = queryString + `and ph.Section = 1 `;
 
-
-  connect().then((con) => {
-    con.query(queryString, function (err, result, fields) {
+    con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
       if (err) throw err;
       result.forEach(element => {
         let paraText = String(element.PlainText).replace(/\[[p]]/g, "<br>");
@@ -256,6 +260,6 @@ function test() {
       response = resultJSON;
       console.log(response);
     });
-    con.end();
   });
+
 }
