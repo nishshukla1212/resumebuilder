@@ -717,7 +717,7 @@ function sendEmail(data) {
     html: JSON.stringify(data, null, 2)
   })
     .catch(error => {
-      log.error('Error sending mail:', error);
+      console.error('Error sending mail: '+ error);
       console.log(error);
       return Promise.reject(error);
     });
