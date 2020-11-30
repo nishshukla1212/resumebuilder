@@ -198,7 +198,7 @@ module.exports.getParagraphsRepeater = (event, context, callback) => {
 
   con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
     if (err) throw err;
-    let i = 0;
+    let i = 1;
     result.forEach(element => {
       let paraText = String(element.PlainText).replace(/\[[p]]/g, "");
       paraText = String(paraText).replace(/\\n/g, "");
