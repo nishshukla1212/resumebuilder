@@ -215,6 +215,51 @@ module.exports.getParagraphsRepeater = (event, context, callback) => {
 });
 };
 
+module.exports.getParagraphsRepeater2 = (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+  let resultJSON = {};
+  let resultarr = [];
+  let response = '';
+  let workID = undefined !== event.queryStringParameters.workID ? event.queryStringParameters.workID : '';
+  let chapterID = undefined !== event.queryStringParameters.chapterID ? event.queryStringParameters.chapterID : '';
+  let sectionID = undefined !== event.queryStringParameters.sectionID ? event.queryStringParameters.sectionID : '';
+  let characterID = undefined !== event.queryStringParameters.characterID ? event.queryStringParameters.characterID : '';
+  let queryString = `select ph.ParagraphNum, ch.CharName, ph.PlainText from Paragraphs ph, Characters ch where ch.CharID = ph.CharID `;
+
+  if (workID.length) {
+    queryString = queryString + `and ph.WorkID = '${workID}' `;
+  }
+  if (chapterID.length) {
+    queryString = queryString + `and ph.Chapter = ${chapterID} `;
+  }
+  if (sectionID.length) {
+    queryString = queryString + `and ph.Section = ${sectionID} `;
+  }
+  if (characterID.length) {
+    queryString = queryString + `and ph.CharID = '${characterID}' `;
+  }
+
+  con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
+    if (err) throw err;
+    let i = 0;
+    let j = 1;
+    result.forEach(element => {
+      let paraText = String(element.PlainText).replace(/\[[p]]/g, "");
+      paraText = String(paraText).replace(/\\n/g, "");
+      resultarr.push({ _id: i.toString(), paragraphNumber: j.toString(), character: element.CharName, paragraph: paraText });
+      i++;
+      j++;
+    });
+    resultJSON.resultarr = resultarr;
+    response = JSON.stringify(resultJSON);
+    callback(null, {
+      statusCode: 200,
+      body: response
+    });
+  });
+});
+};
+
 module.exports.saveView = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
   let resultJSON = {};
