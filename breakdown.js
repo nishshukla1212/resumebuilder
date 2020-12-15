@@ -6,11 +6,12 @@ module.exports.insertBreakDown = (event, context, callback) => {
 
   context.callbackWaitsForEmptyEventLoop = false;
   const data = JSON.parse(event.body);
+  console.log(data);
   var table = "breakdownsTable";
 
   var params = {
     TableName: table,
-    Item: data
+    Item: data[0]
   };
 
   console.log("Adding a new item...");
