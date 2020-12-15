@@ -139,7 +139,7 @@ functions:
       - http:
           path: /saveView
           method: post
-          
+
   insertBreakDown:
     handler: breakdown.insertBreakDown
     memorySize: 1536
@@ -151,7 +151,7 @@ functions:
 
 resources: # CloudFormation template syntax from here on.
   Resources:
-    usersTable:
+    breakdownsTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: breakdownsTable
@@ -159,26 +159,6 @@ resources: # CloudFormation template syntax from here on.
           - AttributeName: projectTitle
             AttributeType: S          
           - AttributeName: productionCompany
-            AttributeType: S
-          - AttributeName: productionType
-            AttributeType: S
-          - AttributeName: castingDirector
-            AttributeType: S 
-          - AttributeName: startDate
-            AttributeType: S
-          - AttributeName: endDate
-            AttributeType: S          
-          - AttributeName: productionDetails
-            AttributeType: S          
-          - AttributeName: rateDescription
-            AttributeType: S          
-          - AttributeName: unionStatus
-            AttributeType: S          
-          - AttributeName: submissionDeadline
-            AttributeType: S          
-          - AttributeName: roles
-            AttributeType: S          
-          - AttributeName: sidesS3Link
             AttributeType: S
         KeySchema:
           - AttributeName: projectTitle
