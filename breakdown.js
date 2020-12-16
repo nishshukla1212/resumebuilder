@@ -21,8 +21,7 @@ module.exports.insertBreakDown = (event, context, callback) => {
     } else {
       console.log("Added item:", JSON.stringify(data, null, 2));
       callback(null, {
-        statusCode: 200,
-        body: response
+        statusCode: 200
       });
     }
   });
