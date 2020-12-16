@@ -20,6 +20,10 @@ module.exports.insertBreakDown = (event, context, callback) => {
       console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
     } else {
       console.log("Added item:", JSON.stringify(data, null, 2));
+      callback(null, {
+        statusCode: 200,
+        body: response
+      });
     }
   });
 
