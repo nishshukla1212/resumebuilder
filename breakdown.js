@@ -88,7 +88,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
     "gender" : gender,    
     "ageRange" : ageRange,    
     "ethnicities" : ethnicities,
-
+    "dt" : dt
   };
 
   var table = "breakdownsTable";
@@ -107,7 +107,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
   filterExpression = filterExpression + String(gender).length > 0 ? 'gender >= :gender and ' : ' '; //gender
   filterExpression = filterExpression + String(ageRange).length > 0 ? 'ageRange >= :ageRange and ' : ' '; //ageRange
   filterExpression = filterExpression + String(ethnicities).length > 0 ? 'ethnicities >= :ethnicities and ' : ' '; //ethnicities
-  filterExpression = filterExpression + String(ethnicities).length > 0 ? 'creationDate <= :dt and ' : ' '; //ethnicities
+  filterExpression = filterExpression + String(dt).length > 0 ? 'creationDate <= :dt and ' : ' '; //ethnicities
 
   filterExpression = String(filterExpression).trim();
   
