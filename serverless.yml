@@ -148,6 +148,17 @@ functions:
       - http:
           path: /insertBreakDown
           method: post
+  
+  getBreakDowns:
+    handler: breakdown.getBreakDowns
+    memorySize: 1536
+    timeout: 30
+    events:
+      - http:
+          path: /getBreakDowns
+          method: get
+          request:
+            parameters: true  
 
 resources: # CloudFormation template syntax from here on.
   Resources:
