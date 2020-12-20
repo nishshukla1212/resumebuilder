@@ -56,6 +56,7 @@ module.exports.deleteBreakDown = (event, context, callback) => {
 
 module.exports.getBreakDowns = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
+  let dt = new Date();
   let params = {};
   let resultJSON = {};
   let resultarr = [];
@@ -86,7 +87,8 @@ module.exports.getBreakDowns = (event, context, callback) => {
     "remoteopportunity" : remoteopportunity,    
     "gender" : gender,    
     "ageRange" : ageRange,    
-    "ethnicities" : ethnicities  
+    "ethnicities" : ethnicities,
+
   };
 
   var table = "breakdownsTable";
@@ -94,18 +96,27 @@ module.exports.getBreakDowns = (event, context, callback) => {
   let keyConditionExpression = 'projectType = :projectType';
 
   let filterExpression = '';
-  filterExpression = filterExpression + String(userID).length > 0 ? 'userID = :userID' : ' '; //userID
-  filterExpression = filterExpression + String(projectTitle).length > 0 ? 'and projectTitle = :projectTitle' : ' '; //projectTitle
-  filterExpression = filterExpression + String(productionCompany).length > 0 ? 'and productionCompany = :productionCompany' : ' '; //productionCompany
-  filterExpression = filterExpression + String(startDate).length > 0 ? 'and startDate >= :startDate' : ' '; //startDate
-  filterExpression = filterExpression + String(endDate).length > 0 ? 'and endDate >= :endDate' : ' '; //endDate
-  filterExpression = filterExpression + String(unionStatus).length > 0 ? 'and unionStatus >= :unionStatus' : ' '; //unionStatus
-  filterExpression = filterExpression + String(submissionDeadline).length > 0 ? 'and submissionDeadline >= :submissionDeadline' : ' '; //submissionDeadline
-  filterExpression = filterExpression + String(remoteopportunity).length > 0 ? 'and remoteopportunity >= :remoteopportunity' : ' '; //remoteopportunity
-  filterExpression = filterExpression + String(gender).length > 0 ? 'and gender >= :gender' : ' '; //gender
-  filterExpression = filterExpression + String(ageRange).length > 0 ? 'and ageRange >= :ageRange' : ' '; //ageRange
-  filterExpression = filterExpression + String(ethnicities).length > 0 ? 'and ethnicities >= :ethnicities' : ' '; //ethnicities
+  filterExpression = filterExpression + String(userID).length > 0 ? 'userID = :userID and ' : ' '; //userID
+  filterExpression = filterExpression + String(projectTitle).length > 0 ? 'projectTitle = :projectTitle and ' : ' '; //projectTitle
+  filterExpression = filterExpression + String(productionCompany).length > 0 ? 'productionCompany = :productionCompany and ' : ' '; //productionCompany
+  filterExpression = filterExpression + String(startDate).length > 0 ? 'startDate >= :startDate and ' : ' '; //startDate
+  filterExpression = filterExpression + String(endDate).length > 0 ? 'endDate >= :endDate and ' : ' '; //endDate
+  filterExpression = filterExpression + String(unionStatus).length > 0 ? 'unionStatus >= :unionStatus and ' : ' '; //unionStatus
+  filterExpression = filterExpression + String(submissionDeadline).length > 0 ? 'submissionDeadline >= :submissionDeadline and ' : ' '; //submissionDeadline
+  filterExpression = filterExpression + String(remoteopportunity).length > 0 ? 'remoteopportunity >= :remoteopportunity and ' : ' '; //remoteopportunity
+  filterExpression = filterExpression + String(gender).length > 0 ? 'gender >= :gender and ' : ' '; //gender
+  filterExpression = filterExpression + String(ageRange).length > 0 ? 'ageRange >= :ageRange and ' : ' '; //ageRange
+  filterExpression = filterExpression + String(ethnicities).length > 0 ? 'ethnicities >= :ethnicities and ' : ' '; //ethnicities
+  filterExpression = filterExpression + String(ethnicities).length > 0 ? 'creationDate <= :dt and ' : ' '; //ethnicities
 
+  filterExpression = String(filterExpression).trim();
+  
+  if(filterExpression.substr(filterExpression.length - 1, 3) === "and"){
+    filterExpression = filterExpression.slice(0,filterExpression.length - 3)[0];
+  }
+
+  console.log(filterExpression);
+  
   var scanParams = {
     TableName: table,
     FilterExpression: filterExpression,
