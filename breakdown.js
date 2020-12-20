@@ -121,25 +121,28 @@ module.exports.getBreakDowns = (event, context, callback) => {
 
   if(projectType.length > 0){
     params = queryParams;
+    console.log(params);
     docClient.query(params, function(err, data) {
       if (err) {
         console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
       } else {
+        console.log(data);
         resultarr.push(data);
       }
     });
   }else{
-      params = scanParams;
-      docClient.scan(params, onScan);
+    params = scanParams;
+    docClient.scan(params, onScan);
 
-      function onScan(err, data) {
-          if (err) {
-            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-          } else 
-              resultarr.push(data.Items);
-              params.ExclusiveStartKey = data.LastEvaluatedKey;
-              docClient.scan(params, onScan);            
+    function onScan(err, data) {
+      if (err) {
+        console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+      } else {
+        resultarr.push(data.Items);
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);            
       }
+    }
   }
   resultJSON.resultarr = resultarr;
     response = JSON.stringify(resultJSON);
