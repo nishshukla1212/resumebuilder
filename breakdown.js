@@ -56,7 +56,7 @@ module.exports.deleteBreakDown = (event, context, callback) => {
 
 module.exports.getBreakDowns = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
-  let dt = new Date();
+  let dt = String(new Date().toDateString).substr(0,9);
   let params = {};
   let resultJSON = {};
   let resultarr = [];
@@ -137,6 +137,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
       if (err) {
         console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
       } else {
+        console.log('successfully executed');
         console.log(data);
         resultarr.push(data);
       }
@@ -156,9 +157,9 @@ module.exports.getBreakDowns = (event, context, callback) => {
     }
   }
   resultJSON.resultarr = resultarr;
-    response = JSON.stringify(resultJSON);
-    callback(null, {
-      statusCode: 200,
-      body: response
-    });
+  response = JSON.stringify(resultJSON);
+  callback(null, {
+    statusCode: 200,
+    body: response
+  });
 };
