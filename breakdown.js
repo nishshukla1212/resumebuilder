@@ -56,7 +56,7 @@ module.exports.deleteBreakDown = (event, context, callback) => {
 
 module.exports.getBreakDowns = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
-  let dt = String(new Date().toDateString).substr(0,9);
+  let dt = new Date().toString().substr(0,9);
   let params = {};
   let resultJSON = {};
   let resultarr = [];
