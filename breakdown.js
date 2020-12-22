@@ -76,19 +76,19 @@ module.exports.getBreakDowns = (event, context, callback) => {
   let ethnicities = undefined !== event.queryStringParameters.ethnicities && event.queryStringParameters.ethnicities.length ? event.queryStringParameters.ethnicities : '';
   
   let expressionAttributeValues = {
-    "userID" : userID,    
-    "projectTitle" : projectTitle,    
-    "productionCompany" : productionCompany,    
-    "projectType" : projectType,    
-    "startDate" : startDate,    
-    "endDate" : endDate,    
-    "unionStatus" : unionStatus,    
-    "submissionDeadline" : submissionDeadline,    
-    "remoteopportunity" : remoteopportunity,    
-    "gender" : gender,    
-    "ageRange" : ageRange,    
-    "ethnicities" : ethnicities,
-    "dt" : dt
+    ":userID" : userID,    
+    ":projectTitle" : projectTitle,    
+    ":productionCompany" : productionCompany,    
+    ":projectType" : projectType,    
+    ":startDate" : startDate,    
+    ":endDate" : endDate,    
+    ":unionStatus" : unionStatus,    
+    ":submissionDeadline" : submissionDeadline,    
+    ":remoteopportunity" : remoteopportunity,    
+    ":gender" : gender,    
+    ":ageRange" : ageRange,    
+    ":ethnicities" : ethnicities,
+    ":dt" : dt
   };
 
   var table = "breakdownsTable";
@@ -187,9 +187,9 @@ var test = () => {
   let ethnicities = '';
   
   let expressionAttributeValues = {
-    "userID" : "",    
-    "projectTitle" : "",    
-    "productionCompany" : "",    
+    ":userID" : "",    
+    ":projectTitle" : "",    
+    ":productionCompany" : "",    
     "projectType" : "Play",    
     "startDate" : "",    
     "endDate" : "",    
