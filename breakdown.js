@@ -92,6 +92,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
   };
 
   var table = "breakdownsTable";
+  var indexName = "projectType-projectTitle-index";
 
   let keyConditionExpression = 'projectType = :projectType';
 
@@ -125,6 +126,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
 
   var queryParams = {
     TableName : table,
+    IndexName : indexName,
     KeyConditionExpression: keyConditionExpression,
     filterExpressions: filterExpression,
     ExpressionAttributeValues: expressionAttributeValues
@@ -201,6 +203,7 @@ var test = () => {
   };
 
   var table = "breakdownsTable";
+  var indexName = "projectType-projectTitle-index";
 
   let keyConditionExpression = 'projectType = :projectType';
 
@@ -234,8 +237,9 @@ var test = () => {
 
   var queryParams = {
     TableName : table,
+    IndexName : indexName,
     KeyConditionExpression: keyConditionExpression,
-    filterExpressions: filterExpression,
+    FilterExpression: filterExpression,
     ExpressionAttributeValues: expressionAttributeValues
   };
 
