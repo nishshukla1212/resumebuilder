@@ -1,6 +1,6 @@
 var AWS = require("aws-sdk");
 
-var docClient = new AWS.DynamoDB.DocumentClient();
+const docClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.insertBreakDown = (event, context, callback) => {
 
@@ -128,7 +128,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
     TableName : table,
     IndexName : indexName,
     KeyConditionExpression: keyConditionExpression,
-    filterExpressions: filterExpression,
+    FilterExpression: filterExpression,
     ExpressionAttributeValues: expressionAttributeValues
   };
 
@@ -137,7 +137,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
     console.log(params);
     docClient.query(params, function(err, data) {
       if (err) {
-        console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+        console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
       } else {
         console.log('successfully executed');
         console.log(data);
