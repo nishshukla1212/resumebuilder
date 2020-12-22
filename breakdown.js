@@ -64,18 +64,31 @@ module.exports.getBreakDowns = (event, context, callback) => {
   let expressionAttributeValues = {};
   let indexName = '';
 
-  let userID =  typeof event.queryStringParameters.userID !== undefined ? event.queryStringParameters.userID : '';
-  let projectTitle = typeof event.queryStringParameters.projectTitle !== undefined ? event.queryStringParameters.projectTitle : '';
-  let productionCompany = typeof event.queryStringParameters.productionCompany !== undefined ? event.queryStringParameters.productionCompany : '';
-  let projectType = typeof event.queryStringParameters.projectType !== undefined ? event.queryStringParameters.projectType : '';
-  let startDate = typeof event.queryStringParameters.startDate !== undefined ? event.queryStringParameters.startDate : '';
-  let endDate = typeof event.queryStringParameters.endDate !== undefined ? event.queryStringParameters.endDate : '';
-  let unionStatus = typeof event.queryStringParameters.unionStatus !== undefined ? event.queryStringParameters.unionStatus : '';
-  let submissionDeadline = typeof event.queryStringParameters.submissionDeadline !== undefined ? event.queryStringParameters.submissionDeadline : '';
-  let remoteopportunity = typeof event.queryStringParameters.remoteopportunity !== undefined ? event.queryStringParameters.remoteopportunity : '';
-  let gender = typeof event.queryStringParameters.gender !== undefined ? event.queryStringParameters.gender : '';
-  let ageRange = typeof event.queryStringParameters.ageRange !== undefined ? event.queryStringParameters.ageRange : '';
-  let ethnicities = typeof event.queryStringParameters.ethnicities !== undefined ? event.queryStringParameters.ethnicities : '';
+  let userID =  '';
+  let projectTitle = '';
+  let productionCompany = '';
+  let projectType = '';
+  let startDate = '';
+  let endDate = '';
+  let unionStatus = '';
+  let submissionDeadline = '';
+  let remoteopportunity = '';
+  let gender = '';
+  let ageRange = '';
+  let ethnicities = '';
+
+  userID =  typeof event.queryStringParameters.userID !== undefined ? event.queryStringParameters.userID : '';
+  projectTitle = typeof event.queryStringParameters.projectTitle !== undefined ? event.queryStringParameters.projectTitle : '';
+  productionCompany = typeof event.queryStringParameters.productionCompany !== undefined ? event.queryStringParameters.productionCompany : '';
+  projectType = typeof event.queryStringParameters.projectType !== undefined ? event.queryStringParameters.projectType : '';
+  startDate = typeof event.queryStringParameters.startDate !== undefined ? event.queryStringParameters.startDate : '';
+  endDate = typeof event.queryStringParameters.endDate !== undefined ? event.queryStringParameters.endDate : '';
+  unionStatus = typeof event.queryStringParameters.unionStatus !== undefined ? event.queryStringParameters.unionStatus : '';
+  submissionDeadline = typeof event.queryStringParameters.submissionDeadline !== undefined ? event.queryStringParameters.submissionDeadline : '';
+  remoteopportunity = typeof event.queryStringParameters.remoteopportunity !== undefined ? event.queryStringParameters.remoteopportunity : '';
+  gender = typeof event.queryStringParameters.gender !== undefined ? event.queryStringParameters.gender : '';
+  ageRange = typeof event.queryStringParameters.ageRange !== undefined ? event.queryStringParameters.ageRange : '';
+  ethnicities = typeof event.queryStringParameters.ethnicities !== undefined ? event.queryStringParameters.ethnicities : '';
 
   if (userID.length > 0) {
     expressionAttributeValues[":userID"] = userID;
