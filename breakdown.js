@@ -56,43 +56,75 @@ module.exports.deleteBreakDown = (event, context, callback) => {
 
 module.exports.getBreakDowns = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
-  let dt = new Date().toISOString().substr(0,10);
+  let dt = new Date().toISOString().substr(0, 10);
   let params = {};
   let resultJSON = {};
   let resultarr = [];
   let response = '';
-  
-  let userID = undefined !== event.queryStringParameters.userID && event.queryStringParameters.userID.length? event.queryStringParameters.userID : '';
-  let projectTitle = undefined !== event.queryStringParameters.projectTitle && event.queryStringParameters.projectTitle.length ? event.queryStringParameters.projectTitle : '';
-  let productionCompany = undefined !== event.queryStringParameters.productionCompany && event.queryStringParameters.productionCompany.length ? event.queryStringParameters.productionCompany : '';
-  let projectType = undefined !== event.queryStringParameters.projectType && event.queryStringParameters.projectType.length ? event.queryStringParameters.projectType : '';
-  let startDate = undefined !== event.queryStringParameters.startDate && event.queryStringParameters.startDate.length ? event.queryStringParameters.startDate : '';
-  let endDate = undefined !== event.queryStringParameters.endDate && event.queryStringParameters.endDate.length ? event.queryStringParameters.endDate : '';
-  let unionStatus = undefined !== event.queryStringParameters.unionStatus && event.queryStringParameters.unionStatus.length ? event.queryStringParameters.unionStatus : '';
-  let submissionDeadline = undefined !== event.queryStringParameters.submissionDeadline && event.queryStringParameters.submissionDeadline.length ? event.queryStringParameters.submissionDeadline : '';
-  let remoteopportunity = undefined !== event.queryStringParameters.remoteopportunity && event.queryStringParameters.remoteopportunity.length ? event.queryStringParameters.remoteopportunity : '';
-  let gender = undefined !== event.queryStringParameters.gender && event.queryStringParameters.gender.length ? event.queryStringParameters.gender : '';
-  let ageRange = undefined !== event.queryStringParameters.ageRange  && event.queryStringParameters.ageRange.length ? event.queryStringParameters.ageRange : '';
-  let ethnicities = undefined !== event.queryStringParameters.ethnicities && event.queryStringParameters.ethnicities.length ? event.queryStringParameters.ethnicities : '';
-  
-  let expressionAttributeValues = {
-    ":userID" : userID,    
-    ":projectTitle" : projectTitle,    
-    ":productionCompany" : productionCompany,    
-    ":projectType" : projectType,    
-    ":startDate" : startDate,    
-    ":endDate" : endDate,    
-    ":unionStatus" : unionStatus,    
-    ":submissionDeadline" : submissionDeadline,    
-    ":remoteopportunity" : remoteopportunity,    
-    ":gender" : gender,    
-    ":ageRange" : ageRange,    
-    ":ethnicities" : ethnicities,
-    ":dt" : dt
-  };
+  let expressionAttributeValues = {};
+  let indexName = '';
+
+  let userID = undefined !== typeof event.queryStringParameters.userID && event.queryStringParameters.userID.length ? event.queryStringParameters.userID : '';
+  let projectTitle = undefined !== typeof event.queryStringParameters.projectTitle && event.queryStringParameters.projectTitle.length ? event.queryStringParameters.projectTitle : '';
+  let productionCompany = undefined !== typeof event.queryStringParameters.productionCompany && event.queryStringParameters.productionCompany.length ? event.queryStringParameters.productionCompany : '';
+  let projectType = undefined !== typeof event.queryStringParameters.projectType && event.queryStringParameters.projectType.length ? event.queryStringParameters.projectType : '';
+  let startDate = undefined !== typeof event.queryStringParameters.startDate && event.queryStringParameters.startDate.length ? event.queryStringParameters.startDate : '';
+  let endDate = undefined !== typeof event.queryStringParameters.endDate && event.queryStringParameters.endDate.length ? event.queryStringParameters.endDate : '';
+  let unionStatus = undefined !== typeof event.queryStringParameters.unionStatus && event.queryStringParameters.unionStatus.length ? event.queryStringParameters.unionStatus : '';
+  let submissionDeadline = undefined !== typeof event.queryStringParameters.submissionDeadline && event.queryStringParameters.submissionDeadline.length ? event.queryStringParameters.submissionDeadline : '';
+  let remoteopportunity = undefined !== typeof event.queryStringParameters.remoteopportunity && event.queryStringParameters.remoteopportunity.length ? event.queryStringParameters.remoteopportunity : '';
+  let gender = undefined !== typeof event.queryStringParameters.gender && event.queryStringParameters.gender.length ? event.queryStringParameters.gender : '';
+  let ageRange = undefined !== typeof event.queryStringParameters.ageRange && event.queryStringParameters.ageRange.length ? event.queryStringParameters.ageRange : '';
+  let ethnicities = undefined !== typeof event.queryStringParameters.ethnicities && event.queryStringParameters.ethnicities.length ? event.queryStringParameters.ethnicities : '';
+
+  if (userID.length > 0) {
+    expressionAttributeValues[":userID"] = userID;
+  }
+  if (projectTitle.length > 0) {
+    expressionAttributeValues[":projectTitle"] = projectTitle;
+  }
+  if (productionCompany.length > 0) {
+    expressionAttributeValues[":productionCompany"] = productionCompany;
+  }
+  if (projectType.length > 0) {
+    expressionAttributeValues[":projectType"] = projectType;
+  }
+  if (startDate.length > 0) {
+    expressionAttributeValues[":startDate"] = startDate;
+  }
+  if (endDate.length > 0) {
+    expressionAttributeValues[":endDate"] = endDate;
+  }
+  if (unionStatus.length > 0) {
+    expressionAttributeValues[":unionStatus"] = unionStatus;
+  }
+  if (submissionDeadline.length > 0) {
+    expressionAttributeValues[":submissionDeadline"] = submissionDeadline;
+  }
+  if (remoteopportunity.length > 0) {
+    expressionAttributeValues[":remoteopportunity"] = remoteopportunity;
+  }
+  if (gender.length > 0) {
+    expressionAttributeValues[":gender"] = gender;
+  }
+  if (ageRange.length > 0) {
+    expressionAttributeValues[":ageRange"] = ageRange;
+  }
+  if (ethnicities.length > 0) {
+    expressionAttributeValues[":ethnicities"] = ethnicities;
+  }
 
   var table = "breakdownsTable";
-  var indexName = "projectType-projectTitle-index";
+
+  if (projectType.length > 0) {
+    indexName = "projectType-projectTitle-index";
+  }
+  if (userID.length > 0) {
+    indexName = "userID-index";
+  }
+  if (submissionDeadline.length > 0) {
+    indexName = "submissionDeadline-creationDate-index";
+  }
 
   let keyConditionExpression = 'projectType = :projectType';
 
@@ -111,13 +143,13 @@ module.exports.getBreakDowns = (event, context, callback) => {
   filterExpression = filterExpression + String(dt).length > 0 ? 'creationDate <= :dt and ' : ' '; //ethnicities
 
   filterExpression = String(filterExpression).trim();
-  
-  if(filterExpression.endsWith(" and")){
-    filterExpression = filterExpression.substr(0,filterExpression.length - 4);
+
+  if (filterExpression.endsWith(" and")) {
+    filterExpression = filterExpression.substr(0, filterExpression.length - 4);
   }
 
   console.log(filterExpression);
-  
+
   var scanParams = {
     TableName: table,
     FilterExpression: filterExpression,
@@ -125,17 +157,17 @@ module.exports.getBreakDowns = (event, context, callback) => {
   };
 
   var queryParams = {
-    TableName : table,
-    IndexName : indexName,
+    TableName: table,
+    IndexName: indexName,
     KeyConditionExpression: keyConditionExpression,
     FilterExpression: filterExpression,
     ExpressionAttributeValues: expressionAttributeValues
   };
 
-  if(projectType.length > 0){
+  if (projectType.length > 0) {
     params = queryParams;
     console.log(params);
-    docClient.query(params, function(err, data) {
+    docClient.query(params, function (err, data) {
       if (err) {
         console.log("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
       } else {
@@ -144,7 +176,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
         resultarr.push(data);
       }
     });
-  }else{
+  } else {
     params = scanParams;
     docClient.scan(params, onScan);
 
@@ -154,7 +186,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
       } else {
         resultarr.push(data.Items);
         params.ExclusiveStartKey = data.LastEvaluatedKey;
-        docClient.scan(params, onScan);            
+        docClient.scan(params, onScan);
       }
     }
   }
@@ -167,40 +199,31 @@ module.exports.getBreakDowns = (event, context, callback) => {
 };
 
 var test = () => {
-  let dt = new Date().toISOString().substr(0,9);
+  let dt = new Date().toISOString().substr(0, 9);
   let params = {};
   let resultJSON = {};
   let resultarr = [];
   let response = '';
-  
+
   let userID = '';
   let projectTitle = '';
-  let productionCompany ='';
+  let productionCompany = '';
   let projectType = "Play";
   let startDate = '';
   let endDate = '';
   let unionStatus = '';
   let submissionDeadline = '';
-  let remoteopportunity ='';
+  let remoteopportunity = '';
   let gender = '';
   let ageRange = '';
   let ethnicities = '';
-  
+
   let expressionAttributeValues = {
-    ":userID" : "",    
-    ":projectTitle" : "",    
-    ":productionCompany" : "",    
-    "projectType" : "Play",    
-    "startDate" : "",    
-    "endDate" : "",    
-    "unionStatus" : "",    
-    "submissionDeadline" : "",    
-    "remoteopportunity" : "",    
-    "gender" : "",    
-    "ageRange" : "",    
-    "ethnicities" : "",
-    "dt" : dt
+    ":projectType": "Play",
+    ":dt": dt
   };
+
+  expressionAttributeValues[":userID"] = 'shuk012';
 
   var table = "breakdownsTable";
   var indexName = "projectType-projectTitle-index";
@@ -222,13 +245,13 @@ var test = () => {
   filterExpression = filterExpression + String(dt).length > 0 ? 'creationDate <= :dt and ' : ' '; //ethnicities
 
   filterExpression = String(filterExpression).trim();
-  
-  if(filterExpression.endsWith(" and")){
-    filterExpression = filterExpression.substr(0,filterExpression.length - 4);
+
+  if (filterExpression.endsWith(" and")) {
+    filterExpression = filterExpression.substr(0, filterExpression.length - 4);
   }
 
   console.log(filterExpression);
-  
+
   var scanParams = {
     TableName: table,
     FilterExpression: filterExpression,
@@ -236,17 +259,17 @@ var test = () => {
   };
 
   var queryParams = {
-    TableName : table,
-    IndexName : indexName,
+    TableName: table,
+    IndexName: indexName,
     KeyConditionExpression: keyConditionExpression,
     FilterExpression: filterExpression,
     ExpressionAttributeValues: expressionAttributeValues
   };
 
-  if(projectType.length > 0){
+  if (projectType.length > 0) {
     params = queryParams;
     console.log(params);
-    docClient.query(params, function(err, data) {
+    docClient.query(params, function (err, data) {
       if (err) {
         console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
       } else {
@@ -255,7 +278,7 @@ var test = () => {
         resultarr.push(data);
       }
     });
-  }else{
+  } else {
     params = scanParams;
     docClient.scan(params, onScan);
 
@@ -265,7 +288,7 @@ var test = () => {
       } else {
         resultarr.push(data.Items);
         params.ExclusiveStartKey = data.LastEvaluatedKey;
-        docClient.scan(params, onScan);            
+        docClient.scan(params, onScan);
       }
     }
   }
