@@ -137,7 +137,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
     console.log(params);
     docClient.query(params, function(err, data) {
       if (err) {
-        console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+        console.log("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
       } else {
         console.log('successfully executed');
         console.log(data);
