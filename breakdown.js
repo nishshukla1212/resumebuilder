@@ -64,18 +64,18 @@ module.exports.getBreakDowns = (event, context, callback) => {
   let expressionAttributeValues = {};
   let indexName = '';
 
-  let userID = undefined !== typeof event.queryStringParameters.userID ? event.queryStringParameters.userID : '';
-  let projectTitle = undefined !== typeof event.queryStringParameters.projectTitle ? event.queryStringParameters.projectTitle : '';
-  let productionCompany = undefined !== typeof event.queryStringParameters.productionCompany ? event.queryStringParameters.productionCompany : '';
-  let projectType = undefined !== typeof event.queryStringParameters.projectType ? event.queryStringParameters.projectType : '';
-  let startDate = undefined !== typeof event.queryStringParameters.startDate ? event.queryStringParameters.startDate : '';
-  let endDate = undefined !== typeof event.queryStringParameters.endDate ? event.queryStringParameters.endDate : '';
-  let unionStatus = undefined !== typeof event.queryStringParameters.unionStatus ? event.queryStringParameters.unionStatus : '';
-  let submissionDeadline = undefined !== typeof event.queryStringParameters.submissionDeadline ? event.queryStringParameters.submissionDeadline : '';
-  let remoteopportunity = undefined !== typeof event.queryStringParameters.remoteopportunity ? event.queryStringParameters.remoteopportunity : '';
-  let gender = undefined !== typeof event.queryStringParameters.gender ? event.queryStringParameters.gender : '';
-  let ageRange = undefined !== typeof event.queryStringParameters.ageRange ? event.queryStringParameters.ageRange : '';
-  let ethnicities = undefined !== typeof event.queryStringParameters.ethnicities  ? event.queryStringParameters.ethnicities : '';
+  let userID =  typeof event.queryStringParameters.userID !== undefined ? event.queryStringParameters.userID : '';
+  let projectTitle = typeof event.queryStringParameters.projectTitle !== undefined ? event.queryStringParameters.projectTitle : '';
+  let productionCompany = typeof event.queryStringParameters.productionCompany !== undefined ? event.queryStringParameters.productionCompany : '';
+  let projectType = typeof event.queryStringParameters.projectType !== undefined ? event.queryStringParameters.projectType : '';
+  let startDate = typeof event.queryStringParameters.startDate !== undefined ? event.queryStringParameters.startDate : '';
+  let endDate = typeof event.queryStringParameters.endDate !== undefined ? event.queryStringParameters.endDate : '';
+  let unionStatus = typeof event.queryStringParameters.unionStatus !== undefined ? event.queryStringParameters.unionStatus : '';
+  let submissionDeadline = typeof event.queryStringParameters.submissionDeadline !== undefined ? event.queryStringParameters.submissionDeadline : '';
+  let remoteopportunity = typeof event.queryStringParameters.remoteopportunity !== undefined ? event.queryStringParameters.remoteopportunity : '';
+  let gender = typeof event.queryStringParameters.gender !== undefined ? event.queryStringParameters.gender : '';
+  let ageRange = typeof event.queryStringParameters.ageRange !== undefined ? event.queryStringParameters.ageRange : '';
+  let ethnicities = typeof event.queryStringParameters.ethnicities !== undefined ? event.queryStringParameters.ethnicities : '';
 
   if (userID.length > 0) {
     expressionAttributeValues[":userID"] = userID;
