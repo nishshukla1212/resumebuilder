@@ -54,7 +54,7 @@ module.exports.deleteBreakDown = (event, context, callback) => {
 
 };
 
-module.exports.getBreakDowns = (event, context, callback) => {
+module.exports.getBreakDowns = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
   let dt = new Date().toISOString().substr(0, 10);
   let params = {};
@@ -183,27 +183,36 @@ module.exports.getBreakDowns = (event, context, callback) => {
   if (String(projectType).length > 0) {
     params = queryParams;
     console.log(params);
-    docClient.query(params, function (err, data) {
-      if (err) {
-        console.log("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-      } else {
-        console.log('successfully executed');
-        console.log(data);
-        resultarr.push(data);
-      }
-    });
+    let data = docClient.query(params, queryFunction);
+    resultarr.push(data);
+
+    function queryFunction (err, data) {
+      return await new Promise((resolve,reject) => {
+        if (err) {
+          console.log("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+          reject(err);
+        } else {
+          console.log('successfully executed');
+          resolve(data);
+        }
+      });
+    }
   } else {
     params = scanParams;
     docClient.scan(params, onScan);
 
     function onScan(err, data) {
-      if (err) {
-        console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-      } else {
-        resultarr.push(data.Items);
-        params.ExclusiveStartKey = data.LastEvaluatedKey;
-        docClient.scan(params, onScan);
-      }
+      return await new Promise((resolve, reject) => {
+        if (err) {
+          console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+          reject(err);
+        } else {
+          resultarr.push(data.Items);
+          params.ExclusiveStartKey = data.LastEvaluatedKey;
+          docClient.scan(params, onScan);
+        }
+        resolve(resultarr);
+      });
     }
   }
   resultJSON.resultarr = resultarr;
