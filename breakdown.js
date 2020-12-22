@@ -77,18 +77,18 @@ module.exports.getBreakDowns = (event, context, callback) => {
   let ageRange = '';
   let ethnicities = '';
 
-  userID =  typeof event.queryStringParameters.userID !== undefined ? event.queryStringParameters.userID : '';
-  projectTitle = typeof event.queryStringParameters.projectTitle !== undefined ? event.queryStringParameters.projectTitle : '';
-  productionCompany = typeof event.queryStringParameters.productionCompany !== undefined ? event.queryStringParameters.productionCompany : '';
-  projectType = typeof event.queryStringParameters.projectType !== undefined ? event.queryStringParameters.projectType : '';
-  startDate = typeof event.queryStringParameters.startDate !== undefined ? event.queryStringParameters.startDate : '';
-  endDate = typeof event.queryStringParameters.endDate !== undefined ? event.queryStringParameters.endDate : '';
-  unionStatus = typeof event.queryStringParameters.unionStatus !== undefined ? event.queryStringParameters.unionStatus : '';
-  submissionDeadline = typeof event.queryStringParameters.submissionDeadline !== undefined ? event.queryStringParameters.submissionDeadline : '';
-  remoteopportunity = typeof event.queryStringParameters.remoteopportunity !== undefined ? event.queryStringParameters.remoteopportunity : '';
-  gender = typeof event.queryStringParameters.gender !== undefined ? event.queryStringParameters.gender : '';
-  ageRange = typeof event.queryStringParameters.ageRange !== undefined ? event.queryStringParameters.ageRange : '';
-  ethnicities = typeof event.queryStringParameters.ethnicities !== undefined ? event.queryStringParameters.ethnicities : '';
+  userID =  event.queryStringParameters.userID === undefined ?  '' : event.queryStringParameters.userID;
+  projectTitle =  event.queryStringParameters.projectTitle === undefined ?  '' : event.queryStringParameters.projectTitle ;
+  productionCompany =  event.queryStringParameters.productionCompany === undefined ?  '' : event.queryStringParameters.productionCompany ;
+  projectType =  event.queryStringParameters.projectType === undefined ?  '' : event.queryStringParameters.projectType ;
+  startDate =  event.queryStringParameters.startDate === undefined ?  '' : event.queryStringParameters.startDate ;
+  endDate =  event.queryStringParameters.endDate === undefined ?  '' : event.queryStringParameters.endDate ;
+  unionStatus =  event.queryStringParameters.unionStatus === undefined ?  '' : event.queryStringParameters.unionStatus ;
+  submissionDeadline =  event.queryStringParameters.submissionDeadline === undefined ?  '' : event.queryStringParameters.submissionDeadline ;
+  remoteopportunity = event.queryStringParameters.remoteopportunity === undefined ?  '' : event.queryStringParameters.remoteopportunity ;
+  gender = event.queryStringParameters.gender === undefined ?  '' : event.queryStringParameters.gender ;
+  ageRange = event.queryStringParameters.ageRange === undefined ?  '' : event.queryStringParameters.ageRange ;
+  ethnicities = event.queryStringParameters.ethnicities === undefined ?  '' : event.queryStringParameters.ethnicities ;
 
   if (String(userID).length > 0) {
     expressionAttributeValues[":userID"] = userID;
@@ -153,7 +153,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
   filterExpression = filterExpression + String(gender).length > 0 ? 'gender >= :gender and ' : ' '; //gender
   filterExpression = filterExpression + String(ageRange).length > 0 ? 'ageRange >= :ageRange and ' : ' '; //ageRange
   filterExpression = filterExpression + String(ethnicities).length > 0 ? 'ethnicities >= :ethnicities and ' : ' '; //ethnicities
-  filterExpression = filterExpression + String(dt).length > 0 ? 'creationDate <= :dt and ' : ' '; //ethnicities
+  filterExpression = filterExpression + String(dt).length > 0 ? 'creationDate <= :dt and ' : ' '; //dt
 
   filterExpression = String(filterExpression).trim();
 
