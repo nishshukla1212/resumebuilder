@@ -90,52 +90,52 @@ module.exports.getBreakDowns = (event, context, callback) => {
   ageRange = typeof event.queryStringParameters.ageRange !== undefined ? event.queryStringParameters.ageRange : '';
   ethnicities = typeof event.queryStringParameters.ethnicities !== undefined ? event.queryStringParameters.ethnicities : '';
 
-  if (userID.length > 0) {
+  if (String(userID).length > 0) {
     expressionAttributeValues[":userID"] = userID;
   }
-  if (projectTitle.length > 0) {
+  if (String(projectTitle).length > 0) {
     expressionAttributeValues[":projectTitle"] = projectTitle;
   }
-  if (productionCompany.length > 0) {
+  if (String(productionCompany).length > 0) {
     expressionAttributeValues[":productionCompany"] = productionCompany;
   }
-  if (projectType.length > 0) {
+  if (String(projectType).length > 0) {
     expressionAttributeValues[":projectType"] = projectType;
   }
-  if (startDate.length > 0) {
+  if (String(startDate).length > 0) {
     expressionAttributeValues[":startDate"] = startDate;
   }
-  if (endDate.length > 0) {
+  if (String(endDate).length > 0) {
     expressionAttributeValues[":endDate"] = endDate;
   }
-  if (unionStatus.length > 0) {
+  if (String(unionStatus).length > 0) {
     expressionAttributeValues[":unionStatus"] = unionStatus;
   }
-  if (submissionDeadline.length > 0) {
+  if (String(submissionDeadline).length > 0) {
     expressionAttributeValues[":submissionDeadline"] = submissionDeadline;
   }
-  if (remoteopportunity.length > 0) {
+  if (String(remoteopportunity).length > 0) {
     expressionAttributeValues[":remoteopportunity"] = remoteopportunity;
   }
-  if (gender.length > 0) {
+  if (String(gender).length > 0) {
     expressionAttributeValues[":gender"] = gender;
   }
-  if (ageRange.length > 0) {
+  if (String(ageRange).length > 0) {
     expressionAttributeValues[":ageRange"] = ageRange;
   }
-  if (ethnicities.length > 0) {
+  if (String(ethnicities).length > 0) {
     expressionAttributeValues[":ethnicities"] = ethnicities;
   }
 
   var table = "breakdownsTable";
 
-  if (projectType.length > 0) {
+  if (String(projectType).length > 0) {
     indexName = "projectType-projectTitle-index";
   }
-  if (userID.length > 0) {
+  if (String(userID).length > 0) {
     indexName = "userID-index";
   }
-  if (submissionDeadline.length > 0) {
+  if (String(submissionDeadline).length > 0) {
     indexName = "submissionDeadline-creationDate-index";
   }
 
@@ -177,7 +177,7 @@ module.exports.getBreakDowns = (event, context, callback) => {
     ExpressionAttributeValues: expressionAttributeValues
   };
 
-  if (projectType.length > 0) {
+  if (String(projectType).length > 0) {
     params = queryParams;
     console.log(params);
     docClient.query(params, function (err, data) {
