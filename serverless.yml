@@ -2,6 +2,7 @@ service: lmbda-pdf
 provider:
   name: aws
   runtime: nodejs12.x
+  versionFunctions: false
   environment:
     STAGE: ${opt:stage}
 
@@ -20,7 +21,7 @@ package:
 functions:
   getpdf:
     handler: handler.getpdf
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -29,7 +30,7 @@ functions:
   
   getHTML:
     handler: handler.getHTML
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -38,7 +39,7 @@ functions:
 
   getWord:
     handler: handler.getWord
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -47,7 +48,7 @@ functions:
 
   getpreviewpdf:
     handler: handler.getpreviewpdf
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -56,7 +57,7 @@ functions:
 
   getCharacters:
     handler: shakespearedb.getCharacters
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -67,7 +68,7 @@ functions:
 
   getWorks:
     handler: shakespearedb.getWorks
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -78,7 +79,7 @@ functions:
 
   getChapters:
     handler: shakespearedb.getChapters
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -89,7 +90,7 @@ functions:
 
   getSections:
     handler: shakespearedb.getSections
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -100,7 +101,7 @@ functions:
 
   getParagraphs:
     handler: shakespearedb.getParagraphs
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -111,7 +112,7 @@ functions:
             
   getParagraphsRepeater:
     handler: shakespearedb.getParagraphsRepeater
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -122,7 +123,7 @@ functions:
              
   getParagraphsRepeater2:
     handler: shakespearedb.getParagraphsRepeater2
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -133,7 +134,7 @@ functions:
             
   saveView:
     handler: shakespearedb.saveView
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -142,7 +143,7 @@ functions:
 
   insertBreakDown:
     handler: breakdown.insertBreakDown
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
@@ -151,7 +152,7 @@ functions:
   
   getBreakDowns:
     handler: breakdown.getBreakDowns
-    memorySize: 1536
+    memorySize: 2048
     timeout: 30
     events:
       - http:
