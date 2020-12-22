@@ -90,6 +90,8 @@ module.exports.getBreakDowns = (event, context, callback) => {
   ageRange = event.queryStringParameters.ageRange === undefined ?  '' : event.queryStringParameters.ageRange ;
   ethnicities = event.queryStringParameters.ethnicities === undefined ?  '' : event.queryStringParameters.ethnicities ;
 
+  expressionAttributeValues[":dt"] = dt;
+
   if (String(userID).length > 0) {
     expressionAttributeValues[":userID"] = userID;
   }
