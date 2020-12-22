@@ -64,18 +64,18 @@ module.exports.getBreakDowns = (event, context, callback) => {
   let expressionAttributeValues = {};
   let indexName = '';
 
-  let userID = undefined !== typeof event.queryStringParameters.userID && event.queryStringParameters.userID.length ? event.queryStringParameters.userID : '';
-  let projectTitle = undefined !== typeof event.queryStringParameters.projectTitle && event.queryStringParameters.projectTitle.length ? event.queryStringParameters.projectTitle : '';
-  let productionCompany = undefined !== typeof event.queryStringParameters.productionCompany && event.queryStringParameters.productionCompany.length ? event.queryStringParameters.productionCompany : '';
-  let projectType = undefined !== typeof event.queryStringParameters.projectType && event.queryStringParameters.projectType.length ? event.queryStringParameters.projectType : '';
-  let startDate = undefined !== typeof event.queryStringParameters.startDate && event.queryStringParameters.startDate.length ? event.queryStringParameters.startDate : '';
-  let endDate = undefined !== typeof event.queryStringParameters.endDate && event.queryStringParameters.endDate.length ? event.queryStringParameters.endDate : '';
-  let unionStatus = undefined !== typeof event.queryStringParameters.unionStatus && event.queryStringParameters.unionStatus.length ? event.queryStringParameters.unionStatus : '';
-  let submissionDeadline = undefined !== typeof event.queryStringParameters.submissionDeadline && event.queryStringParameters.submissionDeadline.length ? event.queryStringParameters.submissionDeadline : '';
-  let remoteopportunity = undefined !== typeof event.queryStringParameters.remoteopportunity && event.queryStringParameters.remoteopportunity.length ? event.queryStringParameters.remoteopportunity : '';
-  let gender = undefined !== typeof event.queryStringParameters.gender && event.queryStringParameters.gender.length ? event.queryStringParameters.gender : '';
-  let ageRange = undefined !== typeof event.queryStringParameters.ageRange && event.queryStringParameters.ageRange.length ? event.queryStringParameters.ageRange : '';
-  let ethnicities = undefined !== typeof event.queryStringParameters.ethnicities && event.queryStringParameters.ethnicities.length ? event.queryStringParameters.ethnicities : '';
+  let userID = undefined !== typeof event.queryStringParameters.userID ? event.queryStringParameters.userID : '';
+  let projectTitle = undefined !== typeof event.queryStringParameters.projectTitle ? event.queryStringParameters.projectTitle : '';
+  let productionCompany = undefined !== typeof event.queryStringParameters.productionCompany ? event.queryStringParameters.productionCompany : '';
+  let projectType = undefined !== typeof event.queryStringParameters.projectType ? event.queryStringParameters.projectType : '';
+  let startDate = undefined !== typeof event.queryStringParameters.startDate ? event.queryStringParameters.startDate : '';
+  let endDate = undefined !== typeof event.queryStringParameters.endDate ? event.queryStringParameters.endDate : '';
+  let unionStatus = undefined !== typeof event.queryStringParameters.unionStatus ? event.queryStringParameters.unionStatus : '';
+  let submissionDeadline = undefined !== typeof event.queryStringParameters.submissionDeadline ? event.queryStringParameters.submissionDeadline : '';
+  let remoteopportunity = undefined !== typeof event.queryStringParameters.remoteopportunity ? event.queryStringParameters.remoteopportunity : '';
+  let gender = undefined !== typeof event.queryStringParameters.gender ? event.queryStringParameters.gender : '';
+  let ageRange = undefined !== typeof event.queryStringParameters.ageRange ? event.queryStringParameters.ageRange : '';
+  let ethnicities = undefined !== typeof event.queryStringParameters.ethnicities  ? event.queryStringParameters.ethnicities : '';
 
   if (userID.length > 0) {
     expressionAttributeValues[":userID"] = userID;
