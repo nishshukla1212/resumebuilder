@@ -3,5 +3,10 @@
   "port":3306,
   "user":"admin",
   "password":"Davinci#1",
-  "database":"oss"
+  "database":"oss",  
+  "hostCasting":"casting.cluster-cae4ria95ugh.us-east-1.rds.amazonaws.com",
+  "portCasting":3306,
+  "userCasting":"casting",
+  "passwordCasting":"Nish12abcd!",
+  "databaseCasting":"casting"
 }

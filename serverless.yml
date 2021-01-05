@@ -159,7 +159,28 @@ functions:
           path: /getBreakDowns
           method: get
           request:
-            parameters: true  
+            parameters: true
+
+  insertProfile:
+    handler: casting.insertProfile
+    memorySize: 2048
+    timeout: 30
+    events:
+      - http:
+          path: /insertProfile
+          method: post
+
+  getProfile:
+    handler: casting.getProfile
+    memorySize: 2048
+    timeout: 30
+    events:
+      - http:
+          path: /getProfile
+          method: get
+          request:
+            parameters: true
+
 
 resources: # CloudFormation template syntax from here on.
   Resources:

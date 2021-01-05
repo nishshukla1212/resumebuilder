@@ -28,7 +28,7 @@ module.exports.insertBreakDown = (event, context, callback) => {
 
 };
 
-module.exports.deleteBreakDown = (event, context, callback) => {
+module.exports.deleteBreakDown = async (event, context, callback) => {
 
   context.callbackWaitsForEmptyEventLoop = false;
   const data = JSON.parse(event.body);
@@ -54,8 +54,7 @@ module.exports.deleteBreakDown = (event, context, callback) => {
 
 };
 
-module.exports.getBreakDowns = async (event, context, callback) => {
-  context.callbackWaitsForEmptyEventLoop = false;
+module.exports.getBreakDowns = (event, context, callback) => {
   let dt = new Date().toISOString().substr(0, 10);
   let params = {};
   let resultJSON = {};
@@ -183,25 +182,36 @@ module.exports.getBreakDowns = async (event, context, callback) => {
   if (String(projectType).length > 0) {
     params = queryParams;
     console.log(params);
-    let data = docClient.query(params, queryFunction);
-    resultarr.push(data);
 
-    function queryFunction (err, data) {
-      return await new Promise((resolve,reject) => {
-        if (err) {
-          console.log("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-          reject(err);
-        } else {
+    docClient.query(params, async (err, data) => {
+      console.log("In query Function");
+      if (err) {
+        console.log("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+      } else {
+        if(data.Items){
           console.log('successfully executed');
-          resolve(data);
+          console.log(data);
+          console.log("data");
+          resultarr.push(data);
+          response = JSON.stringify(resultarr);
+          callback(null, {
+            statusCode: 200,
+            body: response
+          });
         }
-      });
-    }
+      }
+    });
+
   } else {
     params = scanParams;
     docClient.scan(params, onScan);
+    response = JSON.stringify(resultarr);
+    callback(null, {
+      statusCode: 200,
+      body: response
+    });
 
-    function onScan(err, data) {
+    async function onScan(err, data) {
       return await new Promise((resolve, reject) => {
         if (err) {
           console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
@@ -214,13 +224,7 @@ module.exports.getBreakDowns = async (event, context, callback) => {
         resolve(resultarr);
       });
     }
-  }
-  resultJSON.resultarr = resultarr;
-  response = JSON.stringify(resultJSON);
-  callback(null, {
-    statusCode: 200,
-    body: response
-  });
+  }  
 };
 
 var test = () => {
