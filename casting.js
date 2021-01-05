@@ -85,7 +85,7 @@ module.exports.getProfile = (event, context, callback) => {
   let response = '';
   console.log(event);
   let userID = event.queryStringParameters.userID;
-  let queryString = `select distinct sp.first_name, sp.last_name. sp.email, sp.phone,sp.bio,sp.headshot_url_1,sp.headshot_url_2,sp.headshot_url_3,sp.resume_url,sp.demo_reel_url where sp.user_id = '${userID}'`;
+  let queryString = `select distinct sp.first_name, sp.last_name. sp.email, sp.phone,sp.bio,sp.headshot_url_1,sp.headshot_url_2,sp.headshot_url_3,sp.resume_url,sp.demo_reel_url from submission_profile where sp.user_id = '${userID}'`;
   con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
     if (err) {responseCode=500;throw err};
     result.forEach(element => {
