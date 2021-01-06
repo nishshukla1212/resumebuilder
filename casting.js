@@ -29,6 +29,7 @@ module.exports.insertProfile = (event, context, callback) => {
   let response = '';
   let queryString = '';
   const data = JSON.parse(event.body);
+  console.log(data);
   let user_id = data.user_id;
   let first_name = data.first_name;
   let last_name = data.last_name;
