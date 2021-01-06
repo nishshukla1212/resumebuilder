@@ -64,7 +64,7 @@ module.exports.insertProfile = (event, context, callback) => {
     });
   });
 
-  queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,headshot_url_3,resume_url,demo_reel_url,u_dt,c_dt)`;
+  queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,headshot_url_4,resume_url,demo_reel_url,u_dt,c_dt)`;
   let valueString = `Values ('${parameters["user_id"]}','${parameters["first_name"]}','${parameters["last_name"]}','${parameters["email"]}','${parameters["phone"]}','${parameters["bio"]}','${parameters["headshot1_url"]}','${parameters["headshot2_url"]}','${parameters["headshot3_url"]}','${parameters["headshot4_url"]}','${parameters["resume_url"]}','${parameters["demo_reel_url"]}','${parameters["u_dt"]}','${parameters["c_dt"]}')`
   
   queryString = queryString + ' ' + valueString;
