@@ -29,19 +29,19 @@ module.exports.insertProfile = (event, context, callback) => {
   let response = '';
   let queryString = '';
   const data = JSON.parse(event.body);
-  console.log(data);
-  let user_id = data.user_id;
-  let first_name = data.first_name;
-  let last_name = data.last_name;
-  let email = data.email;
-  let phone = data.phone;
-  let bio = data.bio;
-  let headshot1_url = data.headshot1_url;
-  let headshot2_url = data.headshot2_url;
-  let headshot3_url = data.headshot3_url;
-  let headshot4_url = data.headshot4_url;
-  let resume_url = data.resume_url;
-  let demo_reel_url = data.demo_reel_url;
+  console.log(data[0]);
+  let user_id = data[0].user_id;
+  let first_name = data[0].first_name;
+  let last_name = data[0].last_name;
+  let email = data[0].email;
+  let phone = data[0].phone;
+  let bio = data[0].bio;
+  let headshot1_url = data[0].headshot1_url;
+  let headshot2_url = data[0].headshot2_url;
+  let headshot3_url = data[0].headshot3_url;
+  let headshot4_url = data[0].headshot4_url;
+  let resume_url = data[0].resume_url;
+  let demo_reel_url = data[0].demo_reel_url;
   let u_dt = Date.now();
   let c_dt = Date.now();
 
@@ -68,6 +68,7 @@ module.exports.insertProfile = (event, context, callback) => {
   let valueString = `Values ('${user_id}','${first_name}','${last_name}','${email}','${phone}','${bio}','${headshot1_url}','${headshot2_url}','${headshot3_url}','${headshot4_url}','${resume_url}','${demo_reel_url}','${u_dt}','${c_dt}')`
   
   queryString = queryString + ' ' + valueString;
+  console.log(queryString);
   con.then((connect) => {
     connect.query(queryString, function (err, result, fields) {
       if (err) {responseCode=500;throw err;}
