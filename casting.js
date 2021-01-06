@@ -29,30 +29,29 @@ module.exports.insertProfile = (event, context, callback) => {
   let response = '';
   let queryString = '';
   const data = JSON.parse(event.body);
-  let parameters = [];
-  parameters["user_id"] = data.user_id;
-  parameters["first_name"] = data.first_name;
-  parameters["last_name"] = data.last_name;
-  parameters["email"] = data.email;
-  parameters["phone"] = data.phone;
-  parameters["bio"] = data.bio;
-  parameters["headshot1_url"] = data.headshot1_url;
-  parameters["headshot2_url"] = data.headshot2_url;
-  parameters["headshot3_url"] = data.headshot3_url;
-  parameters["headshot4_url"] = data.headshot4_url;
-  parameters["resume_url"] = data.resume_url;
-  parameters["demo_reel_url"] = data.demo_reel_url;
-  parameters["u_dt"] = Date.now();
-  parameters["c_dt"] = Date.now();
+  let user_id = data.user_id;
+  let first_name = data.first_name;
+  let last_name = data.last_name;
+  let email = data.email;
+  let phone = data.phone;
+  let bio = data.bio;
+  let headshot1_url = data.headshot1_url;
+  let headshot2_url = data.headshot2_url;
+  let headshot3_url = data.headshot3_url;
+  let headshot4_url = data.headshot4_url;
+  let resume_url = data.resume_url;
+  let demo_reel_url = data.demo_reel_url;
+  let u_dt = Date.now();
+  let c_dt = Date.now();
 
-  let initialQueryString = `select count(*) as COUNT from submission_profile sp where sp.user_id = '${parameters["user_id"]}'`
+  let initialQueryString = `select count(*) as COUNT from submission_profile sp where sp.user_id = '${user_id}'`
   con.then((connect) => {
     connect.query(initialQueryString, function (err, result, fields) {
       if (err) {responseCode=500;throw err;}
       result.forEach(element => {
         console.log(element);
         if(element.COUNT > 0){
-          let deleteQueryString = `delete from submission_profile where user_id = '${parameters["user_id"]}'`
+          let deleteQueryString = `delete from submission_profile where user_id = '${user_id}'`
           con.then((connect) => {
             connect.query(deleteQueryString, function (err, result, fields) {
               if (err) {responseCode=500;throw err;}
@@ -65,7 +64,7 @@ module.exports.insertProfile = (event, context, callback) => {
   });
 
   queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,headshot_url_4,resume_url,demo_reel_url,u_dt,c_dt)`;
-  let valueString = `Values ('${parameters["user_id"]}','${parameters["first_name"]}','${parameters["last_name"]}','${parameters["email"]}','${parameters["phone"]}','${parameters["bio"]}','${parameters["headshot1_url"]}','${parameters["headshot2_url"]}','${parameters["headshot3_url"]}','${parameters["headshot4_url"]}','${parameters["resume_url"]}','${parameters["demo_reel_url"]}','${parameters["u_dt"]}','${parameters["c_dt"]}')`
+  let valueString = `Values ('${user_id}','${first_name}','${last_name}','${email}','${phone}','${bio}','${headshot1_url}','${headshot2_url}','${headshot3_url}','${headshot4_url}','${resume_url}','${demo_reel_url}','${u_dt}','${c_dt}')`
   
   queryString = queryString + ' ' + valueString;
   con.then((connect) => {
