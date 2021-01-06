@@ -9,7 +9,7 @@ var loginDataCasting = {
   database: options.storageConfig.databaseCasting
 };
 
-const con = connect().then((conn) => { return conn; });
+const con = await connect().then((conn) => { Promise.resolve(conn); });
 
 function connect() {
   let conn = mysql.createConnection(loginDataCasting);
@@ -46,38 +46,38 @@ module.exports.insertProfile = (event, context, callback) => {
   let c_dt = Date.now();
 
   let initialQueryString = `select count(*) as COUNT from submission_profile sp where sp.user_id = '${user_id}'`
-  con.then((connect) => {
-    connect.query(initialQueryString, function (err, result, fields) {
+    con.query(initialQueryString, function (err, result, fields) {
       if (err) {responseCode=500;throw err;}
       result.forEach(element => {
         console.log(element);
         if(element.COUNT > 0){
           let deleteQueryString = `delete from submission_profile where user_id = '${user_id}'`
-          con.then((connect) => {
-            connect.query(deleteQueryString, function (err, result, fields) {
+         
+            con.query(deleteQueryString, function (err, result, fields) {
               if (err) {responseCode=500;throw err;}
               console.log(result);
             });
-          });
+          
         }
       });
     });
-  });
+  
+
 
   queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,headshot_url_4,resume_url,demo_reel_url,u_dt,c_dt)`;
   let valueString = `Values ('${user_id}','${first_name}','${last_name}','${email}','${phone}','${bio}','${headshot1_url}','${headshot2_url}','${headshot3_url}','${headshot4_url}','${resume_url}','${demo_reel_url}','${u_dt}','${c_dt}')`
   
   queryString = queryString + ' ' + valueString;
   console.log(queryString);
-  con.then((connect) => {
-    connect.query(queryString, function (err, result, fields) {
+
+    con.query(queryString, function (err, result, fields) {
       if (err) {responseCode=500;throw err;}
       callback(null, {
         statusCode: responseCode,
         body: response
       });
     });
-  });
+  
 };
 
 module.exports.getProfile = (event, context, callback) => {
