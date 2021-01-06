@@ -44,9 +44,11 @@ module.exports.insertProfile = (event, context, callback) => {
             connection.query(deleteQueryString, function (err, result, fields) {
               if (err) { responseCode = 500; throw err; }
               console.log(result);
+              resolve();
             });
+          }else{
+            resolve();
           }
-          resolve();
         });
       });
     });
@@ -56,7 +58,7 @@ module.exports.insertProfile = (event, context, callback) => {
 
     queryString = queryString + ' ' + valueString;
     console.log(queryString);
-    Promise.all([selecDeletetProm]).then(() => {
+    Promise.all([selecDeletetProm]).then((data) => {
       connection.query(queryString, function (err, result, fields) {
         if (err) { responseCode = 500; throw err; }
         connection.release();
