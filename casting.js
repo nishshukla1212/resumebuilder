@@ -42,15 +42,17 @@ module.exports.insertProfile = (event, context, callback) => {
   parameters["headshot4_url"] = data.headshot4_url;
   parameters["resume_url"] = data.resume_url;
   parameters["demo_reel_url"] = data.demo_reel_url;
+  parameters["u_dt"] = Date.now();
+  parameters["c_dt"] = Date.now();
 
-  let initialQueryString = `select count(sp.*) as COUNT from submission_profile sp where sp.user_id = ${parameters["user_id"]}`
+  let initialQueryString = `select count(*) as COUNT from submission_profile sp where sp.user_id = '${parameters["user_id"]}'`
   con.then((connect) => {
     connect.query(initialQueryString, function (err, result, fields) {
       if (err) {responseCode=500;throw err;}
       result.forEach(element => {
         console.log(element);
         if(element.COUNT > 0){
-          let deleteQueryString = `delete from submission_profile where user_id = ${parameters["user_id"]}`
+          let deleteQueryString = `delete from submission_profile where user_id = '${parameters["user_id"]}'`
           con.then((connect) => {
             connect.query(deleteQueryString, function (err, result, fields) {
               if (err) {responseCode=500;throw err;}
@@ -63,7 +65,7 @@ module.exports.insertProfile = (event, context, callback) => {
   });
 
   queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,headshot_url_3,resume_url,demo_reel_url,u_dt,c_dt)`;
-  let valueString = `Values (${parameters["user_id"]},${parameters["first_name"]},${parameters["last_name"]},${parameters["email"]},${parameters["phone"]},${parameters["bio"]},${parameters["headshot1_url"]},${parameters["headshot2_url"]},${parameters["headshot3_url"]},${parameters["headshot4_url"]},${parameters["resume_url"]},${parameters["demo_reel_url"]},${parameters["u_dt"]},${parameters["c_dt"]})`
+  let valueString = `Values ('${parameters["user_id"]}','${parameters["first_name"]}','${parameters["last_name"]}','${parameters["email"]}','${parameters["phone"]}','${parameters["bio"]}','${parameters["headshot1_url"]}','${parameters["headshot2_url"]}','${parameters["headshot3_url"]}','${parameters["headshot4_url"]}','${parameters["resume_url"]}','${parameters["demo_reel_url"]}','${parameters["u_dt"]}','${parameters["c_dt"]}')`
   
   queryString = queryString + ' ' + valueString;
   con.then((connect) => {
