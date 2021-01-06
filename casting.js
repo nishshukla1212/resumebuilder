@@ -71,7 +71,6 @@ module.exports.insertProfile = (event, context, callback) => {
   con.then((connect) => {
     connect.query(queryString, function (err, result, fields) {
       if (err) {responseCode=500;throw err;}
-      response = JSON.stringify(resultJSON);
       callback(null, {
         statusCode: responseCode,
         body: response
