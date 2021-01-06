@@ -46,7 +46,6 @@ module.exports.insertProfile = (event, context, callback) => {
         }
       });
     });
-  });
 
   queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,headshot_url_4,resume_url,demo_reel_url,u_dt,c_dt)`;
   let valueString = `Values ('${user_id}','${first_name}','${last_name}','${email}','${phone}','${bio}','${headshot1_url}','${headshot2_url}','${headshot3_url}','${headshot4_url}','${resume_url}','${demo_reel_url}','${u_dt}','${c_dt}')`
@@ -62,6 +61,8 @@ module.exports.insertProfile = (event, context, callback) => {
         body: response
       });
     });
+
+  });
 };
 
 module.exports.getProfile = (event, context, callback) => {
