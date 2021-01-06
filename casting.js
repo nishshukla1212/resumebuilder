@@ -21,7 +21,7 @@ module.exports.insertProfile = (event, context, callback) => {
   let last_name = data[0].last_name;
   let email = data[0].email;
   let phone = data[0].phone;
-  let bio = data[0].bio;
+  let bio = String(stringToHTML(data[0].bio).toString());
   let headshot1_url = data[0].headshot1_url;
   let headshot2_url = data[0].headshot2_url;
   let headshot3_url = data[0].headshot3_url;
@@ -48,7 +48,7 @@ module.exports.insertProfile = (event, context, callback) => {
     });
 
   queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,headshot_url_4,resume_url,demo_reel_url,u_dt,c_dt)`;
-  let valueString = `Values ('${user_id}','${first_name}','${last_name}','${email}','${phone}',"${bio}",'${headshot1_url}','${headshot2_url}','${headshot3_url}','${headshot4_url}','${resume_url}','${demo_reel_url}',null,null)`
+  let valueString = `Values ('${user_id}','${first_name}','${last_name}','${email}','${phone}','${bio}','${headshot1_url}','${headshot2_url}','${headshot3_url}','${headshot4_url}','${resume_url}','${demo_reel_url}',null,null)`
   
   queryString = queryString + ' ' + valueString;
   console.log(queryString);
@@ -91,4 +91,10 @@ module.exports.getProfile = (event, context, callback) => {
     });
   });
 });
+};
+
+var stringToHTML = function (str) {
+	var parser = new DOMParser();
+	var doc = parser.parseFromString(str, 'text/html');
+	return doc.body;
 };
