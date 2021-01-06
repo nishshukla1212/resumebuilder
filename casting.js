@@ -39,6 +39,7 @@ module.exports.insertProfile = (event, context, callback) => {
   parameters["headshot1_url"] = data.headshot1_url;
   parameters["headshot2_url"] = data.headshot2_url;
   parameters["headshot3_url"] = data.headshot3_url;
+  parameters["headshot4_url"] = data.headshot4_url;
   parameters["resume_url"] = data.resume_url;
   parameters["demo_reel_url"] = data.demo_reel_url;
 
@@ -61,8 +62,8 @@ module.exports.insertProfile = (event, context, callback) => {
     });
   });
 
-  queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,resume_url,demo_reel_url,u_dt,c_dt)`;
-  let valueString = `Values (${parameters["user_id"]},${parameters["first_name"]},${parameters["last_name"]},${parameters["email"]},${parameters["phone"]},${parameters["bio"]},${parameters["headshot1_url"]},${parameters["headshot2_url"]},${parameters["headshot3_url"]},${parameters["resume_url"]},${parameters["demo_reel_url"]},${parameters["u_dt"]},${parameters["c_dt"]})`
+  queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,headshot_url_3,resume_url,demo_reel_url,u_dt,c_dt)`;
+  let valueString = `Values (${parameters["user_id"]},${parameters["first_name"]},${parameters["last_name"]},${parameters["email"]},${parameters["phone"]},${parameters["bio"]},${parameters["headshot1_url"]},${parameters["headshot2_url"]},${parameters["headshot3_url"]},${parameters["headshot4_url"]},${parameters["resume_url"]},${parameters["demo_reel_url"]},${parameters["u_dt"]},${parameters["c_dt"]})`
   
   queryString = queryString + ' ' + valueString;
   con.then((connect) => {
@@ -90,7 +91,7 @@ module.exports.getProfile = (event, context, callback) => {
   con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
     if (err) {responseCode=500;throw err};
     result.forEach(element => {
-      resultarr.push({_id: i.toString(), first_name: element.first_name, last_name: element.last_name,email: element.email,phone: element.phone,bio: element.bio,headshot_url_1: element.headshot_url_1,headshot_url_2: element.headshot_url_2,headshot_url_3: element.headshot_url_3,resume_url: element.resume_url,demo_reel_url: element.demo_reel_url});
+      resultarr.push({_id: i.toString(), first_name: element.first_name, last_name: element.last_name,email: element.email,phone: element.phone,bio: element.bio,headshot_url_1: element.headshot_url_1,headshot_url_2: element.headshot_url_2,headshot_url_3: element.headshot_url_3,headshot_url_4: element.headshot_url_4,resume_url: element.resume_url,demo_reel_url: element.demo_reel_url});
       i++;
     });
     resultJSON.resultarr = resultarr;
