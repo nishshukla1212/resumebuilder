@@ -2,26 +2,12 @@ const mysql = require('mysql');
 
 var options = require('./options');
 
-var loginDataCasting = {
+var loginDataCasting = mysql.createPool({
   host: options.storageConfig.host,
   user: options.storageConfig.user,
   password: options.storageConfig.password,
   database: options.storageConfig.databaseCasting
-};
-
-const con = await connect().then((conn) => { Promise.resolve(conn); });
-
-function connect() {
-  let conn = mysql.createConnection(loginDataCasting);
-  console.log("connecting");
-  return new Promise((resolve, reject) => {
-    conn.connect(function (err) {
-      if (err) reject(err);
-      console.log("Connected!");
-      resolve(conn);
-    })
-  });
-}
+});
 
 module.exports.insertProfile = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -46,38 +32,36 @@ module.exports.insertProfile = (event, context, callback) => {
   let c_dt = Date.now();
 
   let initialQueryString = `select count(*) as COUNT from submission_profile sp where sp.user_id = '${user_id}'`
-    con.query(initialQueryString, function (err, result, fields) {
+  loginDataCasting.getConnection((err, connection) => {
+    connection.query(initialQueryString, function (err, result, fields) {
       if (err) {responseCode=500;throw err;}
       result.forEach(element => {
         console.log(element);
         if(element.COUNT > 0){
           let deleteQueryString = `delete from submission_profile where user_id = '${user_id}'`
-         
-            con.query(deleteQueryString, function (err, result, fields) {
-              if (err) {responseCode=500;throw err;}
-              console.log(result);
-            });
-          
+          connection.query(deleteQueryString, function (err, result, fields) {
+            if (err) {responseCode=500;throw err;}
+            console.log(result);
+          });
         }
       });
     });
-  
-
+  });
 
   queryString = `Insert into submission_profile (user_id, first_name,last_name,email,phone,bio,headshot_url_1,headshot_url_2,headshot_url_3,headshot_url_4,resume_url,demo_reel_url,u_dt,c_dt)`;
   let valueString = `Values ('${user_id}','${first_name}','${last_name}','${email}','${phone}','${bio}','${headshot1_url}','${headshot2_url}','${headshot3_url}','${headshot4_url}','${resume_url}','${demo_reel_url}','${u_dt}','${c_dt}')`
   
   queryString = queryString + ' ' + valueString;
   console.log(queryString);
-
-    con.query(queryString, function (err, result, fields) {
+ 
+  connection.query(queryString, function (err, result, fields) {
       if (err) {responseCode=500;throw err;}
+      connection.release();
       callback(null, {
         statusCode: responseCode,
         body: response
       });
     });
-  
 };
 
 module.exports.getProfile = (event, context, callback) => {
@@ -90,7 +74,8 @@ module.exports.getProfile = (event, context, callback) => {
   let userID = event.queryStringParameters.userID;
   let queryString = `select distinct sp.first_name, sp.last_name, sp.email, sp.phone,sp.bio,sp.headshot_url_1,sp.headshot_url_2,sp.headshot_url_3,sp.resume_url,sp.demo_reel_url from submission_profile sp where sp.user_id = '${userID}'`;
   let i=0;
-  con.then((connect)=>{connect.query(queryString, function (err, result, fields) {
+  loginDataCasting.getConnection((err, connection) =>{
+    connection.query(queryString, function (err, result, fields) {
     if (err) {responseCode=500;throw err};
     result.forEach(element => {
       resultarr.push({_id: i.toString(), first_name: element.first_name, last_name: element.last_name,email: element.email,phone: element.phone,bio: element.bio,headshot_url_1: element.headshot_url_1,headshot_url_2: element.headshot_url_2,headshot_url_3: element.headshot_url_3,headshot_url_4: element.headshot_url_4,resume_url: element.resume_url,demo_reel_url: element.demo_reel_url});
@@ -98,6 +83,7 @@ module.exports.getProfile = (event, context, callback) => {
     });
     resultJSON.resultarr = resultarr;
     response = JSON.stringify(resultJSON);
+    connection.release();
     callback(null, {
       statusCode: responseCode,
       body: response
