@@ -157,9 +157,9 @@ module.exports.getProfile = (event, context, callback) => {
       if (err) { responseCode = 500; throw err };
       result.forEach(element => {
         if(undefined !== typeof element.bio && element.bio.length){
-          let stringified_bio = '<!DOCTYPE html>'+element.bio;
+          let stringified_bio = '<!DOCTYPE html>'+`<div>${element.bio}</div>`;
           let dom = new JSDOM(stringified_bio);
-          stringified_bio = dom.window.document.querySelector("p").textContent.toString();
+          stringified_bio = dom.window.document.querySelector("div").innerHTML.toString();
           element.bio = stringified_bio;
         }
         resultarr.push({ _id: i.toString(), first_name: element.first_name, last_name: element.last_name, email: element.email, phone: element.phone, bio: element.bio, headshot_url_1: element.headshot_url_1, headshot_url_2: element.headshot_url_2, headshot_url_3: element.headshot_url_3, headshot_url_4: element.headshot_url_4, resume_url: element.resume_url, demo_reel_url: element.demo_reel_url });
