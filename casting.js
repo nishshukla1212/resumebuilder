@@ -5,6 +5,15 @@ const options = require('./options');
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
 
+const mysqlOptions = {
+    host: options.storageConfig.host,
+    user: options.storageConfig.user,
+    password: options.storageConfig.password,
+    database: options.storageConfig.databaseCasting,
+    socketPath: false,
+    connectionLimit: 10
+};
+
 const loginDataCasting = mysql.createPool({
     host: options.storageConfig.host,
     user: options.storageConfig.user,
@@ -111,12 +120,12 @@ module.exports.insertJob = (event, context, callback) => {
     let submission_deadline = data.submission_deadline ? data.submission_deadline : '';
     let sides_link = data.sides_link ? data.sides_link : '';
     loginDataCasting.getConnection((err, connection) => {
-        if(err){
+        if (err) {
             responseCode = 500;
             throw err;
         }
         connection.beginTransaction(function (err) {
-            if(err){
+            if (err) {
                 responseCode = 500;
                 throw err;
             }
@@ -140,9 +149,8 @@ module.exports.insertJob = (event, context, callback) => {
                 rolesQueryString = `insert into roles (role_id, project_id, role_name, role_type, remote, gender,
                                                        age_range,
                                                        ethnicity, skills)`;
-                rolesValueString = `Values ('${role_id}','${project_id}','${role_name}','${role_type}','${remote}','${gender}','${age_range}','${ethnicity}','${skills}')`;
+                rolesValueString = `Values ('${role_id}','${project_id}','${role_name}','${role_type}',${remote},'${gender}',${age_range},'${ethnicity}','${skills}')`;
                 rolesQueryString = rolesQueryString + ' ' + rolesValueString;
-                queryString = queryString + ' ' + valueString;
                 console.log(queryString);
 
                 let initialQueryString = `select count(*) as COUNT from projects pp where pp.project_id = '${project_id}'`;
@@ -150,7 +158,7 @@ module.exports.insertJob = (event, context, callback) => {
                 connection.query(initialQueryString, function (err, result, fields) {
                     if (err) {
                         responseCode = 500;
-                        connection.rollback(()=>{
+                        connection.rollback(() => {
                             responseCode = 500;
                         });
                         throw err;
@@ -163,7 +171,7 @@ module.exports.insertJob = (event, context, callback) => {
                                 connection.query(deleteQueryString, function (err, result, fields) {
                                     if (err) {
                                         responseCode = 500;
-                                        connection.rollback(()=>{
+                                        connection.rollback(() => {
                                             responseCode = 500;
                                         });
                                         throw err;
@@ -172,7 +180,7 @@ module.exports.insertJob = (event, context, callback) => {
                                     connection.query(deleteRolesString, function (err, result, fields) {
                                         if (err) {
                                             responseCode = 500;
-                                            connection.rollback(()=>{
+                                            connection.rollback(() => {
                                                 responseCode = 500;
                                             });
                                             throw err;
@@ -180,7 +188,7 @@ module.exports.insertJob = (event, context, callback) => {
                                         connection.query(queryString, function (err, result, fields) {
                                             if (err) {
                                                 responseCode = 500;
-                                                connection.rollback(()=>{
+                                                connection.rollback(() => {
                                                     responseCode = 500;
                                                 });
                                                 throw err;
@@ -194,7 +202,7 @@ module.exports.insertJob = (event, context, callback) => {
                                         connection.query(rolesQueryString, function (err, result, fields) {
                                             if (err) {
                                                 responseCode = 500;
-                                                connection.rollback(()=>{
+                                                connection.rollback(() => {
                                                     responseCode = 500;
                                                 });
                                                 throw err;
@@ -211,7 +219,7 @@ module.exports.insertJob = (event, context, callback) => {
                                 connection.query(queryString, function (err, result, fields) {
                                     if (err) {
                                         responseCode = 500;
-                                        connection.rollback(()=>{
+                                        connection.rollback(() => {
                                             responseCode = 500;
                                         });
                                         throw err;
@@ -219,14 +227,14 @@ module.exports.insertJob = (event, context, callback) => {
                                     connection.query(rolesQueryString, function (err, result, fields) {
                                         if (err) {
                                             responseCode = 500;
-                                            connection.rollback(()=>{
+                                            connection.rollback(() => {
                                                 responseCode = 500;
                                             });
                                             throw err;
                                         }
-                                        connection.commit(err =>{
-                                            if (err){
-                                                connection.rollback(()=>{
+                                        connection.commit(err => {
+                                            if (err) {
+                                                connection.rollback(() => {
                                                     responseCode = 500;
                                                     throw('connection Rollback');
                                                 });
@@ -251,6 +259,107 @@ module.exports.insertJob = (event, context, callback) => {
 
             });
         });
+    });
+};
+
+module.exports.getJob = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+    let responseCode = 200;
+    let response = '';
+    let queryString = '';
+    let valueString = '';
+    const data = JSON.parse(event.body)[0];
+    console.log(JSON.stringify(data, null, 2));
+
+    let project_type = data.project_type ? data.project_type : '';
+    let gender = data.gender ? data.gender : '';
+    let age_range = data.age_range ? data.age_range : '';
+    let remote = data.remote ? data.remote : '';
+    let rate_details = data.rate_details ? data.rate_details : '';
+    let union_status = data.union_status ? data.union_status : '';
+    let start_date = data.start_date ? data.start_date : '';
+    let end_date = data.end_date ? data.end_date : '';
+    let submission_deadline = data.submission_deadline ? data.submission_deadline : '';
+    let i = 0;
+    loginDataCasting.getConnection((err, connection) => {
+        if (err) {
+            responseCode = 500;
+            throw err;
+        }
+
+        queryString = `select pp.*,ro.role_name
+                       from projects pp,
+                            roles ro
+                       where`;
+        valueString = `pp.project_id = ro.project_id and pp.role_id = ro.role_id`;
+        if (project_type.length > 0) {
+            valueString = valueString + ' ' + 'and' + ' ' + `pp.project_type = '${project_type}'`;
+        }
+        if (gender.length > 0) {
+            valueString = valueString + ' ' + 'and' + ' ' + `ro.gender = '${gender}'`;
+        }
+        if (age_range.length > 0) {
+            valueString = valueString + ' ' + 'and' + ' ' + `ro.age_range <= ${age_range}`;
+        }
+        if (remote.length > 0) {
+            valueString = valueString + ' ' + 'and' + ' ' + `ro.remote = ${remote}`;
+        }
+        if (rate_details.length > 0) {
+            valueString = valueString + ' ' + 'and' + ' ' + `pp.rate_details = '${rate_details}'`;
+        }
+        if (union_status.length > 0) {
+            valueString = valueString + ' ' + 'and' + ' ' + `pp.union_status = '${union_status}'`;
+        }
+        if (start_date.length > 0) {
+            valueString = valueString + ' ' + 'and' + ' ' + `pp.start_date >= '${start_date}'`;
+        }
+        if (end_date.length > 0) {
+            valueString = valueString + ' ' + 'and' + ' ' + `pp.end_date <= '${end_date}'`;
+        }
+        if (submission_deadline.length > 0) {
+            valueString = valueString + ' ' + 'and' + ' ' + `pp.submission_deadline >= '${submission_deadline}'`;
+        }
+
+        queryString = queryString + ' ' + valueString;
+
+        console.log(queryString);
+
+        connection.query(queryString, function (err, result, fields) {
+                if (err) {
+                    responseCode = 500;
+                    throw err;
+                }
+                result.forEach(element => {
+                    console.log(element);
+                    resultarr.push({
+                        _id: i.toString(),
+                        project_id : element.project_id,
+                        casting_user_id : element.casting_user_id,
+                        role_id : element.role_id,
+                        role_name: element.role_name,
+                        project_title : element.project_title,
+                        production_company : element.production_company,
+                        casting_director : element.casting_director,
+                        start_date : element.start_date,
+                        end_date : element.end_date,
+                        production_details : element.production_details,
+                        rate_details : element.rate_details,
+                        union_status : element.union_status,
+                        submission_deadline : element.submission_deadline,
+                        sides_link : element.sides_link,
+                    });
+                    i++;
+                });
+                resultJSON.resultarr = resultarr;
+                response = JSON.stringify(resultJSON);
+                connection.release();
+                callback(null, {
+                    statusCode: responseCode,
+                    body: response
+                });
+
+            }
+        );
     });
 };
 
