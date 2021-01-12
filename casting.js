@@ -603,7 +603,7 @@ module.exports.getProfile = (event, context, callback) => {
                 resolve(response);
             });
         });
-        Promise.all([queryPromise]).then((values) => {
+        queryPromise.then((values) => {
             callback(null, {
                 statusCode: responseCode,
                 body: values
