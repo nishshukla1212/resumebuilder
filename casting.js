@@ -571,7 +571,7 @@ module.exports.getProfile = (event, context, callback) => {
         if (err) {
             responseCode = 500;
             console.log(err);
-            reject(err);
+            throw err;
         }
         let queryPromise = new Promise((resolve, reject) => {
             connection.query(queryString, function (err, result, fields) {
