@@ -564,7 +564,7 @@ module.exports.getProfile = (event, context, callback) => {
     let response = '';
     console.log(event);
     let userID = event.queryStringParameters.userID;
-    let queryString = `select distinct sp.first_name, sp.last_name, sp.email, sp.phone,sp.bio,sp.headshot_url_1,sp.headshot_url_2,sp.headshot_url_3,sp.headshot_url_4,sp.resume_url,sp.demo_reel_url from submission_profile sp where sp.user_id = '${userID}'`;
+    let queryString = `select distinct sp.c_uid, sp.first_name, sp.last_name, sp.email, sp.phone,sp.bio,sp.headshot_url_1,sp.headshot_url_2,sp.headshot_url_3,sp.headshot_url_4,sp.resume_url,sp.demo_reel_url from submission_profile sp where sp.user_id = '${userID}'`;
     let i = 0;
     console.log("connecting to db");
     loginDataCasting.getConnection((err, connection) => {
@@ -583,6 +583,7 @@ module.exports.getProfile = (event, context, callback) => {
                 result.forEach(element => {
                     resultarr.push({
                         _id: i.toString(),
+                        c_uid:element.c_uid,
                         first_name: element.first_name,
                         last_name: element.last_name,
                         email: element.email,
