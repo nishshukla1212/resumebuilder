@@ -568,6 +568,11 @@ module.exports.getProfile = (event, context, callback) => {
     let i = 0;
     let responsePromise = new Promise((resolve, reject) => {
         loginDataCasting.getConnection((err, connection) => {
+            if (err) {
+                responseCode = 500;
+                console.log(err);
+                return Promise.reject(err);
+            }
             let queryPromise = new Promise((resolve, reject) => {
                 connection.query(queryString, function (err, result, fields) {
                     if (err) {
