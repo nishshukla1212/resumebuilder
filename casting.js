@@ -573,7 +573,7 @@ module.exports.getProfile = (event, context, callback) => {
                     if (err) {
                         responseCode = 500;
                         console.log(err);
-                        reject(err);
+                        return Promise.reject(err);
                     }
                     result.forEach(element => {
                         resultarr.push({
@@ -595,7 +595,7 @@ module.exports.getProfile = (event, context, callback) => {
                     resultJSON.resultarr = resultarr;
                     response = JSON.stringify(resultJSON);
                     connection.release();
-                    resolve(response);
+                    return Promise.resolve(response);
                 });
             });
             Promise.all([queryPromise]).then((values) => {
@@ -605,10 +605,10 @@ module.exports.getProfile = (event, context, callback) => {
     }).then((err, data) => {
             if (err) {
                 console.log(err);
-                reject(err);
+                return Promise.reject(err);
             }
             console.log(data);
-            resolve(data);
+        return Promise.resolve(data);
         }
     );
     responsePromise.finally((data) => {
