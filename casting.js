@@ -571,14 +571,14 @@ module.exports.getProfile = (event, context, callback) => {
             if (err) {
                 responseCode = 500;
                 console.log(err);
-                return Promise.reject(err);
+                reject(err);
             }
             let queryPromise = new Promise((resolve, reject) => {
                 connection.query(queryString, function (err, result, fields) {
                     if (err) {
                         responseCode = 500;
                         console.log(err);
-                        return Promise.reject(err);
+                        reject(err);
                     }
                     result.forEach(element => {
                         resultarr.push({
@@ -600,22 +600,16 @@ module.exports.getProfile = (event, context, callback) => {
                     resultJSON.resultarr = resultarr;
                     response = JSON.stringify(resultJSON);
                     connection.release();
-                    return Promise.resolve(response);
+                    resolve(response);
                 });
             });
             Promise.all([queryPromise]).then((values) => {
                 resolve(values);
             });
         });
-    }).then((err, data) => {
-            if (err) {
-                console.log(err);
-                return Promise.reject(err);
-            }
-            console.log(data);
-        return Promise.resolve(data);
-        }
-    );
+        resolve(response);
+    })
+
     responsePromise.finally((data) => {
         callback(null, {
             statusCode: responseCode,
