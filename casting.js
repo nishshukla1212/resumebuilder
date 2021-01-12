@@ -566,48 +566,57 @@ module.exports.getProfile = (event, context, callback) => {
     let userID = event.queryStringParameters.userID;
     let queryString = `select distinct sp.first_name, sp.last_name, sp.email, sp.phone,sp.bio,sp.headshot_url_1,sp.headshot_url_2,sp.headshot_url_3,sp.headshot_url_4,sp.resume_url,sp.demo_reel_url from submission_profile sp where sp.user_id = '${userID}'`;
     let i = 0;
-    loginDataCasting.getConnection((err, connection) => {
-        let queryPromise = new Promise((resolve, reject) => {
-            connection.query(queryString, function (err, result, fields) {
-                if (err) {
-                    responseCode = 500;
-                    console.log(err);
-                    reject(err);
-                }
-                result.forEach(element => {
-                    resultarr.push({
-                        _id: i.toString(),
-                        first_name: element.first_name,
-                        last_name: element.last_name,
-                        email: element.email,
-                        phone: element.phone,
-                        bio: element.bio,
-                        headshot_url_1: element.headshot_url_1,
-                        headshot_url_2: element.headshot_url_2,
-                        headshot_url_3: element.headshot_url_3,
-                        headshot_url_4: element.headshot_url_4,
-                        resume_url: element.resume_url,
-                        demo_reel_url: element.demo_reel_url
+    let responsePromise = new Promise((resolve, reject) => {
+        loginDataCasting.getConnection((err, connection) => {
+            let queryPromise = new Promise((resolve, reject) => {
+                connection.query(queryString, function (err, result, fields) {
+                    if (err) {
+                        responseCode = 500;
+                        console.log(err);
+                        reject(err);
+                    }
+                    result.forEach(element => {
+                        resultarr.push({
+                            _id: i.toString(),
+                            first_name: element.first_name,
+                            last_name: element.last_name,
+                            email: element.email,
+                            phone: element.phone,
+                            bio: element.bio,
+                            headshot_url_1: element.headshot_url_1,
+                            headshot_url_2: element.headshot_url_2,
+                            headshot_url_3: element.headshot_url_3,
+                            headshot_url_4: element.headshot_url_4,
+                            resume_url: element.resume_url,
+                            demo_reel_url: element.demo_reel_url
+                        });
+                        i++;
                     });
-                    i++;
+                    resultJSON.resultarr = resultarr;
+                    response = JSON.stringify(resultJSON);
+                    connection.release();
+                    resolve(response);
                 });
-                resultJSON.resultarr = resultarr;
-                response = JSON.stringify(resultJSON);
-                connection.release();
-                resolve(response);
+            });
+            Promise.all([queryPromise]).then((values) => {
+                resolve(values);
             });
         });
-        Promise.all([queryPromise]).then((values) => {
-            return values;
-        });
-    }).then((data) => {
+    }).then((err, data) => {
+            if (err) {
+                console.log(err);
+                reject(err);
+            }
             console.log(data);
-            callback(null, {
-                statusCode: responseCode,
-                body: response
-            });
+            resolve(data);
         }
     );
+    responsePromise.finally((data) => {
+        callback(null, {
+            statusCode: responseCode,
+            body: data
+        });
+    });
 };
 
 module.exports.getAllProfiles = (event, context, callback) => {
