@@ -1,4 +1,4 @@
-const mysql = require('mysql2/promise');
+const mysql = require('mysql');
 
 const options = require('./options');
 
@@ -287,7 +287,7 @@ module.exports.getJob = (event, context, callback) => {
             throw err;
         }
 
-        queryString = `select pp.*,ro.role_name
+        queryString = `select pp.*, ro.role_name
                        from projects pp,
                             roles ro
                        where`;
@@ -333,20 +333,20 @@ module.exports.getJob = (event, context, callback) => {
                     console.log(element);
                     resultarr.push({
                         _id: i.toString(),
-                        project_id : element.project_id,
-                        casting_user_id : element.casting_user_id,
-                        role_id : element.role_id,
+                        project_id: element.project_id,
+                        casting_user_id: element.casting_user_id,
+                        role_id: element.role_id,
                         role_name: element.role_name,
-                        project_title : element.project_title,
-                        production_company : element.production_company,
-                        casting_director : element.casting_director,
-                        start_date : element.start_date,
-                        end_date : element.end_date,
-                        production_details : element.production_details,
-                        rate_details : element.rate_details,
-                        union_status : element.union_status,
-                        submission_deadline : element.submission_deadline,
-                        sides_link : element.sides_link,
+                        project_title: element.project_title,
+                        production_company: element.production_company,
+                        casting_director: element.casting_director,
+                        start_date: element.start_date,
+                        end_date: element.end_date,
+                        production_details: element.production_details,
+                        rate_details: element.rate_details,
+                        union_status: element.union_status,
+                        submission_deadline: element.submission_deadline,
+                        sides_link: element.sides_link,
                     });
                     i++;
                 });
@@ -363,6 +363,199 @@ module.exports.getJob = (event, context, callback) => {
     });
 };
 
+function getAllAvailableRoles() {
+    let queryString = `select distinct ro.*
+                       from roles ro`;
+    return new Promise((resolve, reject) => {
+        loginDataCasting.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            }
+            connection.query(queryString, function (error, result, fields) {
+                if (error) {
+                    console.error(error);
+                    reject(err);
+                }
+                resolve(result);
+            }).finally(() => {
+                connection.release();
+            });
+        });
+    })
+}
+
+function getSpecificRole(role_id) {
+    let queryString = `select distinct ro.*
+                       from roles ro where ro.role_id = '${role_id}'`;
+    return new Promise((resolve, reject) => {
+        loginDataCasting.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            }
+            connection.query(queryString, function (error, result, fields) {
+                if (error) {
+                    console.error(error);
+                    reject(err);
+                }
+                resolve(result);
+            }).finally(() => {
+                connection.release();
+            });
+        });
+    })
+}
+
+function getRolesForProject(project_id) {
+    let queryString = `select distinct ro.*
+                       from roles ro
+                       where ro.project_id = '${project_id}'`;
+    return new Promise((resolve, reject) => {
+        loginDataCasting.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            }
+            connection.query(queryString, function (error, result, fields) {
+                if (error) {
+                    console.error(error);
+                    reject(err);
+                }
+                resolve(result);
+            }).finally(() => {
+                connection.release();
+            });
+        });
+    })
+}
+
+function getRoleForSpecificProject(project_id, role_id) {
+    let queryString = `select distinct ro.*
+                       from roles ro, projects pp
+                       where ro.project_id = pp.project_id
+                       and ro.role_id = pp.role_id 
+                       and pp.project_id = '${project_id}'
+                       and pp.role_id = '${role_id}'`;
+    return new Promise((resolve, reject) => {
+        loginDataCasting.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            }
+            connection.query(queryString, function (error, result, fields) {
+                if (error) {
+                    console.error(error);
+                    reject(err);
+                }
+                resolve(result);
+            }).finally(() => {
+                connection.release();
+            });
+        });
+    })
+}
+
+module.exports.getRole = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+    let responseCode = 200;
+    let response = '';
+    let resultJSON = {};
+    let resultarr = [];
+    let result;
+    let project_id = undefined !== event.queryStringParameters.project_id ? event.queryStringParameters.project_id : '';
+    let role_id = undefined !== event.queryStringParameters.role_id ? event.queryStringParameters.role_id : '';
+    if (project_id.length === 0) {
+        if (role_id.length === 0) {
+            result = getAllAvailableRoles();
+        } else {
+            result = getSpecificRole(role_id);
+        }
+    } else {
+        if (role_id.length === 0) {
+            result = getRolesForProject(project_id);
+        } else {
+            result = getRoleForSpecificProject(project_id, role_id);
+        }
+    }
+    let i = 0;
+    Promise.all([result]).then((data) => {
+        data.forEach(element => {
+            resultarr.push({
+                _id: i.toString(),
+                role_id: element.role_id,
+                project_id: element.project_id,
+                role_name: element.role_name,
+                role_type: element.role_type,
+                remote: element.remote,
+                gender: element.gender,
+                age_range: element.age_range,
+                ethnicity: element.ethnicity,
+                skills: element.skills
+            });
+            i++;
+        });
+        resultJSON.resultarr = resultarr;
+        response = JSON.stringify(resultJSON);
+    }).catch((err) => {
+        responseCode = 500;
+        throw err;
+    }).then(
+        callback(null, {
+            statusCode: responseCode,
+            body: response
+        })
+    );
+};
+
+module.exports.applyToRole = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+    let responseCode = 200;
+    let response = '';
+    let resultJSON = {};
+    let resultarr = [];
+    let result;
+    let project_id = undefined !== event.queryStringParameters.project_id ? event.queryStringParameters.project_id : '';
+    let role_id = undefined !== event.queryStringParameters.role_id ? event.queryStringParameters.role_id : '';
+    if (project_id.length === 0) {
+        if (role_id.length === 0) {
+            result = getAllAvailableRoles();
+        } else {
+            result = getSpecificRole(role_id);
+        }
+    } else {
+        if (role_id.length === 0) {
+            result = getRolesForProject(project_id);
+        } else {
+            result = getRoleForSpecificProject(project_id, role_id);
+        }
+    }
+    let i = 0;
+    Promise.all([result]).then((data) => {
+        data.forEach(element => {
+            resultarr.push({
+                _id: i.toString(),
+                role_id: element.role_id,
+                project_id: element.project_id,
+                role_name: element.role_name,
+                role_type: element.role_type,
+                remote: element.remote,
+                gender: element.gender,
+                age_range: element.age_range,
+                ethnicity: element.ethnicity,
+                skills: element.skills
+            });
+            i++;
+        });
+        resultJSON.resultarr = resultarr;
+        response = JSON.stringify(resultJSON);
+    }).catch((err) => {
+        responseCode = 500;
+        throw err;
+    }).then(
+        callback(null, {
+            statusCode: responseCode,
+            body: response
+        })
+    );
+};
+
 module.exports.getProfile = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
     let responseCode = 200;
@@ -377,7 +570,7 @@ module.exports.getProfile = (event, context, callback) => {
         connection.query(queryString, function (err, result, fields) {
             if (err) {
                 responseCode = 500;
-                throw err
+                throw err;
             }
             ;
             result.forEach(element => {
@@ -443,7 +636,6 @@ module.exports.getAllProfiles = (event, context, callback) => {
                 responseCode = 500;
                 throw err
             }
-            ;
             result.forEach(element => {
                 resultarr.push({
                     _id: i.toString(),
