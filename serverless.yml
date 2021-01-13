@@ -173,7 +173,7 @@ functions:
   getProfile:
     handler: casting.getProfile
     memorySize: 2048
-    timeout: 30
+    timeout: 60
     events:
       - http:
           path: /getProfile

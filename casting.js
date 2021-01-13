@@ -34,7 +34,7 @@ module.exports.insertProfile = (event, context, callback) => {
     let last_name = data[0].last_name;
     let email = data[0].email;
     let phone = data[0].phone;
-    let bio = String(stringToHTML(data[0].bio).toString());
+    let bio = data[0].bio;
     let headshot1_url = data[0].headshot1_url;
     let headshot2_url = data[0].headshot2_url;
     let headshot3_url = data[0].headshot3_url;
