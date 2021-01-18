@@ -181,6 +181,47 @@ functions:
           request:
             parameters: true
 
+  insertJob:
+    handler: casting.insertJob
+    memorySize: 2048
+    timeout: 30
+    events:
+      - http:
+          path: /insertJob
+          method: post
+
+  getJob:
+    handler: casting.getJob
+    memorySize: 2048
+    timeout: 60
+    events:
+      - http:
+          path: /getJob
+          method: get
+          request:
+            parameters: true
+
+  getRole:
+    handler: casting.getRole
+    memorySize: 2048
+    timeout: 60
+    events:
+      - http:
+          path: /getRole
+          method: get
+          request:
+            parameters: true
+
+  applyToRole:
+    handler: casting.applyToRole
+    memorySize: 2048
+    timeout: 60
+    events:
+      - http:
+          path: /applyToRole
+          method: get
+          request:
+            parameters: true
 
 resources: # CloudFormation template syntax from here on.
   Resources:

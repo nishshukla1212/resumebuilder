@@ -583,7 +583,7 @@ module.exports.getProfile = (event, context, callback) => {
                 result.forEach(element => {
                     resultarr.push({
                         _id: i.toString(),
-                        c_uid:element.c_uid,
+                        c_uid: element.c_uid,
                         first_name: element.first_name,
                         last_name: element.last_name,
                         email: element.email,
