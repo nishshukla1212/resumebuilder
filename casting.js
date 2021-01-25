@@ -227,6 +227,7 @@ module.exports.insertJob = (event, context, callback) => {
                                         });
                                         throw err;
                                     }
+                                });
                                     connection.query(rolesQueryString, function (err, result, fields) {
                                         if (err) {
                                             responseCode = 500;
@@ -235,33 +236,29 @@ module.exports.insertJob = (event, context, callback) => {
                                             });
                                             throw err;
                                         }
-                                        connection.commit(err => {
-                                            if (err) {
-                                                connection.rollback(() => {
-                                                    responseCode = 500;
-                                                    throw('connection Rollback');
-                                                });
-                                            }
-                                        });
-                                        connection.release();
-                                        callback(null, {
-                                            statusCode: responseCode,
-                                            body: response
-                                        });
                                     });
-                                    connection.release();
-                                    callback(null, {
-                                        statusCode: responseCode,
-                                        body: response
-                                    });
-                                });
+
                             }
                         }
                     );
                 });
 
             });
+            connection.commit(err => {
+                if (err) {
+                    connection.rollback(() => {
+                        responseCode = 500;
+                        throw('connection Rollback');
+                    });
+                }
+            });
+            connection.release();
+            callback(null, {
+                statusCode: responseCode,
+                body: response
+            });
         });
+
     });
 };
 
