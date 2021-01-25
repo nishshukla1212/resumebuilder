@@ -108,7 +108,7 @@ module.exports.insertJob = (event, context, callback) => {
     const data = JSON.parse(event.body)[0];
     console.log(JSON.stringify(data, null, 2));
 
-    data.project_id = hash({project_title: data.project_title, casting_user_id: data.casting_user_id}).toString();
+    data.project_id = hash.MD5({project_title: data.project_title, casting_user_id: data.casting_user_id}).toString();
 
     let project_id = data.project_id;
     let casting_user_id = data.casting_user_id ? data.casting_user_id : '';
@@ -133,7 +133,7 @@ module.exports.insertJob = (event, context, callback) => {
                 throw err;
             }
             data.roles.forEach(role => {
-                let role_id = hash({project_id: project_id, role_name: role.role_name });
+                let role_id = hash.MD5({project_id: project_id, role_name: role.role_name });
                 let role_name = role.role_name ? role.role_name : '';
                 let role_type = role.role_type ? role.role_type : '';
                 let remote = role.remote ? role.remote : '';
