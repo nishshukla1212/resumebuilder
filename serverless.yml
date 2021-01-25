@@ -201,6 +201,15 @@ functions:
           request:
             parameters: true
 
+  getAllJobs:
+    handler: casting.getAllJobs
+    memorySize: 2048
+    timeout: 60
+    events:
+      - http:
+          path: /getAllJobs
+          method: get
+
   getRole:
     handler: casting.getRole
     memorySize: 2048
