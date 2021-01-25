@@ -418,14 +418,12 @@ module.exports.getAllJobs=(event, context, callback) => {
                 });
                 resultJSON.resultarr = resultarr;
                 response = JSON.stringify(resultJSON);
-
-            }).finally(() => {
                 connection.release();
                 callback(null, {
                     statusCode: 200,
                     body: response
                 });
-            });
+            })
         });
     })
 }
