@@ -414,7 +414,6 @@ module.exports.getAllJobs=(event, context, callback) => {
                     resultarr.push({ _id: (index + 1).toString(), project_id: element.project_id.toString(), casting_user_id: element.casting_user_id, role_id: element.role_id
                         , project_title: element.project_title, production_company: element.production_company, casting_director: element.casting_director, start_date: element.start_date, end_date: element.end_date
                         , production_details: element.production_details, rate_details: element.rate_details, union_status: element.union_status, submission_deadline: element.submission_deadline, sides_link: element.sides_link, project_type: element.project_type});
-                    i++;
                 });
                 resultJSON.resultarr = resultarr;
                 response = JSON.stringify(resultJSON);
