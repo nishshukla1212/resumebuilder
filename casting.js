@@ -133,7 +133,10 @@ module.exports.insertJob = (event, context, callback) => {
                 responseCode = 500;
                 throw err;
             }
-            data.roles.forEach(role => {
+            data.roles.forEach(roles => {
+                console.log(roles);
+                roles.forEach(role =>{
+                    console.log(role);
                 let role_id = hash.MD5({project_id: project_id, role_name: role.role_name });
                 let role_name = role.role_name ? role.role_name : '';
                 let role_type = role.role_type ? role.role_type : '';
@@ -152,7 +155,7 @@ module.exports.insertJob = (event, context, callback) => {
                 rolesQueryString = `insert into roles (role_id, project_id, role_name, role_type, remote, gender,
                                                        age_range,
                                                        ethnicity, skills)`;
-                rolesValueString = `Values ('${role_id}','${project_id}','${role_name}','${role_type}',${remote},'${gender}',${age_range},'${ethnicity}','${skills}')`;
+                rolesValueString = `Values ('${role_id}','${project_id}','${role_name}','${role_type}','${remote}','${gender}',${age_range},'${ethnicity}','${skills}')`;
                 rolesQueryString = rolesQueryString + ' ' + rolesValueString;
                 console.log(queryString);
 
@@ -256,6 +259,7 @@ module.exports.insertJob = (event, context, callback) => {
                         }
                     );
                 });
+            });
 
             });
 
