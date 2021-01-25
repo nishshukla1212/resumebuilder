@@ -389,6 +389,48 @@ function getAllAvailableRoles() {
     })
 }
 
+module.exports.getAllJobs=(event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+    let responseCode = 200;
+    let response = '';
+    let resultJSON = {};
+    let resultarr = [];
+    let queryString = `select distinct pr.*
+                       from projects pr`;
+    return new Promise((resolve, reject) => {
+        loginDataCasting.getConnection((err, connection) => {
+            if (err) {
+                console.error(err);
+                responseCode=500;
+                response=err;
+            }
+            connection.query(queryString, function (error, result, fields) {
+                if (error) {
+                    console.error(err);
+                    responseCode=500;
+                    response=err;
+                }
+                result.forEach((element,index) => {
+                    resultarr.push({ _id: (index + 1).toString(), project_id: element.project_id.toString(), casting_user_id: element.casting_user_id, role_id: element.role_id
+                        , project_title: element.project_title, production_company: element.production_company, casting_director: element.casting_director, start_date: element.start_date, end_date: element.end_date
+                        , production_details: element.production_details, rate_details: element.rate_details, union_status: element.union_status, submission_deadline: element.submission_deadline, sides_link: element.sides_link, project_type: element.project_type});
+                    i++;
+                });
+                resultJSON.resultarr = resultarr;
+                response = JSON.stringify(resultJSON);
+
+            }).finally(() => {
+                connection.release();
+                callback(null, {
+                    statusCode: 200,
+                    body: response
+                });
+            });
+        });
+    })
+}
+
+
 function getSpecificRole(role_id) {
     let queryString = `select distinct ro.*
                        from roles ro where ro.role_id = '${role_id}'`;
