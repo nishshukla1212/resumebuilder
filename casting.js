@@ -147,7 +147,7 @@ module.exports.insertJob = (event, context, callback) => {
                                                      casting_director, start_date, end_date, production_details,
                                                      rate_details,
                                                      union_status, submission_deadline, sides_link)`;
-                valueString = `Values ('${project_id}','${production_company}','${project_type}',${casting_user_id}','${role_id}','${project_title}','${casting_director}','${start_date}','${end_date}','${production_details}','${rate_details}','${union_status}','${submission_deadline}','${sides_link}')`;
+                valueString = `Values ('${project_id}','${production_company}','${project_type}','${casting_user_id}','${role_id}','${project_title}','${casting_director}','${start_date}','${end_date}','${production_details}','${rate_details}','${union_status}','${submission_deadline}','${sides_link}')`;
                 queryString = queryString + ' ' + valueString;
                 rolesQueryString = `insert into roles (role_id, project_id, role_name, role_type, remote, gender,
                                                        age_range,
