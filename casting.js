@@ -4,6 +4,7 @@ const options = require('./options');
 
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
+const {hash} = require('object-hash');
 
 const mysqlOptions = {
     host: options.storageConfig.host,
@@ -107,7 +108,9 @@ module.exports.insertJob = (event, context, callback) => {
     const data = JSON.parse(event.body)[0];
     console.log(JSON.stringify(data, null, 2));
 
-    let project_id = data.project_id ? data.project_id : '';
+    data.project_id = hash({project_title: data.project_title, casting_user_id: data.casting_user_id}).toString();
+
+    let project_id = data.project_id;
     let casting_user_id = data.casting_user_id ? data.casting_user_id : '';
     let project_title = data.project_title ? data.project_title : '';
     let production_company = data.production_company ? data.production_company : '';
@@ -130,7 +133,7 @@ module.exports.insertJob = (event, context, callback) => {
                 throw err;
             }
             data.roles.forEach(role => {
-                let role_id = role.role_id ? role.role_id : '';
+                let role_id = hash({project_id: project_id, role_name: role.role_name });
                 let role_name = role.role_name ? role.role_name : '';
                 let role_type = role.role_type ? role.role_type : '';
                 let remote = role.remote ? role.remote : '';
