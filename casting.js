@@ -136,14 +136,14 @@ module.exports.insertJob = (event, context, callback) => {
             data.roles.forEach(role => {
                 console.log(role);
 
-                let role_id = hash.MD5({project_id: project_id, role_name: role.role_name });
-                let role_name = role.role_name ? role.role_name : '';
-                let role_type = role.role_type ? role.role_type : '';
-                let remote = role.remote ? role.remote : '';
-                let gender = role.gender ? role.gender : '';
-                let age_range = role.age_range ? role.age_range : '';
-                let ethnicity = role.ethnicity ? role.ethnicity : '';
-                let skills = role.skills ? role.skills : '';
+                let role_id = hash.MD5({project_id: project_id, role_name: role[0].role_name });
+                let role_name = role[0].role_name ? role[0].role_name : '';
+                let role_type = role[0].role_type ? role[0].role_type : '';
+                let remote = role[0].remote ? role[0].remote : '';
+                let gender = role[0].gender ? role[0].gender : '';
+                let age_range = role[0].age_range ? role[0].age_range : '';
+                let ethnicity = role[0].ethnicity ? role[0].ethnicity : '';
+                let skills = role[0].skills ? role[0].skills : '';
 
                 queryString = `insert into projects (project_id,production_company,project_type, casting_user_id, role_id, project_title,
                                                      casting_director, start_date, end_date, production_details,
