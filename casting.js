@@ -133,8 +133,8 @@ module.exports.insertJob = (event, context, callback) => {
                 responseCode = 500;
                 throw err;
             }
-            data.roles.forEach(roles => {
-                console.log(roles);
+            data.roles.forEach(role => {
+                console.log(role);
 
                 let role_id = hash.MD5({project_id: project_id, role_name: role.role_name });
                 let role_name = role.role_name ? role.role_name : '';
