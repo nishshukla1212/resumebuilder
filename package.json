@@ -24,6 +24,7 @@
     "mysql2": "^2.2.5",
     "node-mysql-helper": "^0.6.7",
     "nodemailer": "^6.4.11",
+    "object-hash": "^2.1.1",
     "pizzip": "^3.0.6",
     "puppeteer-core": "^3.3.0",
     "superagent": "^5.2.1"
