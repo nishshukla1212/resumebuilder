@@ -4,7 +4,7 @@ const options = require('./options');
 
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
-const {hash} = require('object-hash');
+const hash = require('object-hash');
 
 const mysqlOptions = {
     host: options.storageConfig.host,
