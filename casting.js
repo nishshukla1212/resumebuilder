@@ -113,6 +113,7 @@ module.exports.insertJob = (event, context, callback) => {
     let project_id = data.project_id;
     let casting_user_id = data.casting_user_id ? data.casting_user_id : '';
     let project_title = data.project_title ? data.project_title : '';
+    let project_type = data.project_type ? data.project_type : '';
     let production_company = data.production_company ? data.production_company : '';
     let casting_director = data.casting_director ? data.casting_director : '';
     let start_date = data.start_date ? data.start_date : '';
@@ -142,12 +143,11 @@ module.exports.insertJob = (event, context, callback) => {
                 let ethnicity = role.ethnicity ? role.ethnicity : '';
                 let skills = role.skills ? role.skills : '';
 
-                queryString = `insert into projects (project_id, casting_user_id, role_id, project_title,
-                                                     production_company,
+                queryString = `insert into projects (project_id,production_company,project_type, casting_user_id, role_id, project_title,
                                                      casting_director, start_date, end_date, production_details,
                                                      rate_details,
                                                      union_status, submission_deadline, sides_link)`;
-                valueString = `Values ('${project_id}','${production_company}','${casting_user_id}','${role_id}','${project_title}','${casting_director}','${start_date}','${end_date}','${production_details}','${rate_details}','${union_status}','${submission_deadline}','${sides_link}')`;
+                valueString = `Values ('${project_id}','${production_company}','${project_type}',${casting_user_id}','${role_id}','${project_title}','${casting_director}','${start_date}','${end_date}','${production_details}','${rate_details}','${union_status}','${submission_deadline}','${sides_link}')`;
                 queryString = queryString + ' ' + valueString;
                 rolesQueryString = `insert into roles (role_id, project_id, role_name, role_type, remote, gender,
                                                        age_range,
