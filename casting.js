@@ -135,8 +135,7 @@ module.exports.insertJob = (event, context, callback) => {
             }
             data.roles.forEach(roles => {
                 console.log(roles);
-                roles.forEach(role =>{
-                    console.log(role);
+
                 let role_id = hash.MD5({project_id: project_id, role_name: role.role_name });
                 let role_name = role.role_name ? role.role_name : '';
                 let role_type = role.role_type ? role.role_type : '';
@@ -259,7 +258,7 @@ module.exports.insertJob = (event, context, callback) => {
                         }
                     );
                 });
-            });
+
 
             });
 
