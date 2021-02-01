@@ -136,7 +136,7 @@ module.exports.insertJob = (event, context, callback) => {
             data.roles.forEach(role => {
                 console.log(role);
 
-                let role_id = hash.MD5({project_id: project_id, role_name: role[0].role_name });
+                let role_id = hash.MD5({project_id: project_id, role_name: role[0].role_name});
                 let role_name = role[0].role_name ? role[0].role_name : '';
                 let role_type = role[0].role_type ? role[0].role_type : '';
                 let remote = role[0].remote ? role[0].remote : '';
@@ -145,7 +145,8 @@ module.exports.insertJob = (event, context, callback) => {
                 let ethnicity = role[0].ethnicity ? role[0].ethnicity : '';
                 let skills = role[0].skills ? role[0].skills : '';
 
-                queryString = `insert into projects (project_id,production_company,project_type, casting_user_id, role_id, project_title,
+                queryString = `insert into projects (project_id, production_company, project_type, casting_user_id,
+                                                     role_id, project_title,
                                                      casting_director, start_date, end_date, production_details,
                                                      rate_details,
                                                      union_status, submission_deadline, sides_link)`;
@@ -389,7 +390,7 @@ function getAllAvailableRoles() {
     })
 }
 
-module.exports.getAllJobs=(event, context, callback) => {
+module.exports.getAllJobs = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
     let responseCode = 200;
     let response = '';
@@ -401,19 +402,35 @@ module.exports.getAllJobs=(event, context, callback) => {
         loginDataCasting.getConnection((err, connection) => {
             if (err) {
                 console.error(err);
-                responseCode=500;
-                response=err;
+                responseCode = 500;
+                response = err;
             }
             connection.query(queryString, function (error, result, fields) {
                 if (error) {
                     console.error(err);
-                    responseCode=500;
-                    response=err;
+                    responseCode = 500;
+                    response = err;
                 }
-                result.forEach((element,index) => {
-                    resultarr.push({ _id: (index + 1).toString(), project_id: element.project_id.toString(), casting_user_id: element.casting_user_id, role_id: element.role_id
-                        , project_title: element.project_title, production_company: element.production_company, casting_director: element.casting_director, start_date: element.start_date, end_date: element.end_date
-                        , production_details: element.production_details, rate_details: element.rate_details, union_status: element.union_status, submission_deadline: element.submission_deadline, sides_link: element.sides_link, project_type: element.project_type});
+                result.forEach((element, index) => {
+                    resultarr.push({
+                        _id: (index + 1).toString(),
+                        project_id: element.project_id.toString(),
+                        casting_user_id: element.casting_user_id,
+                        role_id: element.role_id
+                        ,
+                        project_title: element.project_title,
+                        production_company: element.production_company,
+                        casting_director: element.casting_director,
+                        start_date: element.start_date,
+                        end_date: element.end_date
+                        ,
+                        production_details: element.production_details,
+                        rate_details: element.rate_details,
+                        union_status: element.union_status,
+                        submission_deadline: element.submission_deadline,
+                        sides_link: element.sides_link,
+                        project_type: element.project_type
+                    });
                 });
                 resultJSON.resultarr = resultarr;
                 response = JSON.stringify(resultJSON);
@@ -428,50 +445,42 @@ module.exports.getAllJobs=(event, context, callback) => {
 }
 
 
-function getSpecificRole(role_id) {
+function getSpecificRole(connection, role_id) {
     let queryString = `select distinct ro.*
                        from roles ro where ro.role_id = '${role_id}'`;
 
     return new Promise((resolve, reject) => {
-        loginDataCasting.getConnection((err, connection) => {
-            if (err) {
+
+        connection.query(queryString, function (error, result, fields) {
+            if (error) {
+                console.error(error);
                 reject(err);
             }
-            connection.query(queryString, function (error, result, fields) {
-                if (error) {
-                    console.error(error);
-                    reject(err);
-                }
-                connection.release();
-                resolve(result);
+            connection.release();
+            resolve(result);
 
-            })
-        });
-    })
+        })
+    });
 }
 
-function getRolesForProject(project_id) {
+function getRolesForProject(connection, project_id) {
     let queryString = `select distinct ro.*
                        from roles ro
                        where ro.project_id = '${project_id}'`;
     return new Promise((resolve, reject) => {
-        loginDataCasting.getConnection((err, connection) => {
-            if (err) {
+
+        connection.query(queryString, function (error, result, fields) {
+            if (error) {
+                console.error(error);
                 reject(err);
             }
-            connection.query(queryString, function (error, result, fields) {
-                if (error) {
-                    console.error(error);
-                    reject(err);
-                }
-                connection.release();
-                resolve(result);
-            })
-        });
+            connection.release();
+            resolve(result);
+        })
     })
 }
 
-function getRoleForSpecificProject(project_id, role_id) {
+function getRoleForSpecificProject(connection, project_id, role_id) {
     let queryString = `select distinct ro.*
                        from roles ro, projects pp
                        where ro.project_id = pp.project_id
@@ -479,19 +488,16 @@ function getRoleForSpecificProject(project_id, role_id) {
                        and pp.project_id = '${project_id}'
                        and pp.role_id = '${role_id}'`;
     return new Promise((resolve, reject) => {
-        loginDataCasting.getConnection((err, connection) => {
-            if (err) {
+
+        connection.query(queryString, function (error, result, fields) {
+            if (error) {
+                console.error(error);
                 reject(err);
             }
-            connection.query(queryString, function (error, result, fields) {
-                if (error) {
-                    console.error(error);
-                    reject(err);
-                }
-                connection.release();
-                resolve(result);
-            })
-        });
+            connection.release();
+            resolve(result);
+        })
+
     })
 }
 
@@ -504,19 +510,25 @@ module.exports.getRole = (event, context, callback) => {
     let result;
     let project_id = undefined !== event.queryStringParameters.project_id ? event.queryStringParameters.project_id : '';
     let role_id = undefined !== event.queryStringParameters.role_id ? event.queryStringParameters.role_id : '';
-    if (project_id.length === 0) {
-        if (role_id.length === 0) {
-            result = getAllAvailableRoles();
-        } else {
-            result = getSpecificRole(role_id);
+    loginDataCasting.getConnection((err, connection) => {
+        if (err) {
+            reject(err);
         }
-    } else {
-        if (role_id.length === 0) {
-            result = getRolesForProject(project_id);
+        if (project_id.length === 0) {
+            if (role_id.length === 0) {
+                result = getAllAvailableRoles(connection);
+            } else {
+                result = getSpecificRole(connection, role_id);
+            }
         } else {
-            result = getRoleForSpecificProject(project_id, role_id);
+            if (role_id.length === 0) {
+                result = getRolesForProject(connection, project_id);
+            } else {
+                result = getRoleForSpecificProject(connection, project_id, role_id);
+            }
         }
-    }
+    });
+
     let i = 0;
     Promise.all([result]).then((data) => {
         data.forEach(element => {
