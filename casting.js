@@ -513,28 +513,27 @@ module.exports.getRole = (event, context, callback) => {
     let result;
     let project_id = undefined !== event.queryStringParameters.project_id ? event.queryStringParameters.project_id : '';
     let role_id = undefined !== event.queryStringParameters.role_id ? event.queryStringParameters.role_id : '';
-    loginDataCasting.getConnection((err, connection) => {
+    loginDataCasting.getConnection(async (err, connection) => {
         if (err) {
             reject(err);
         }
         if (project_id.length === 0) {
             if (role_id.length === 0) {
-                result = getAllAvailableRoles(connection);
+                result = await getAllAvailableRoles(connection);
             } else {
-                result = getSpecificRole(connection, role_id);
+                result = await getSpecificRole(connection, role_id);
             }
         } else {
             if (role_id.length === 0) {
-                result = getRolesForProject(connection, project_id);
+                result = await getRolesForProject(connection, project_id);
             } else {
-                result = getRoleForSpecificProject(connection, project_id, role_id);
+                result = await getRoleForSpecificProject(connection, project_id, role_id);
             }
         }
 
         let i = 0;
-        Promise.all([result]).then((data) => {
              console.table(data);
-            data.forEach(element => {
+            result.forEach(element => {
                 resultarr.push({
                     _id: i.toString(),
                     role_id: element.role_id,
@@ -551,15 +550,11 @@ module.exports.getRole = (event, context, callback) => {
             });
             resultJSON.resultarr = resultarr;
             response = JSON.stringify(resultJSON);
-        }).catch((err) => {
-            responseCode = 500;
-            throw err;
-        }).then(
             callback(null, {
                 statusCode: responseCode,
                 body: response
             })
-        );
+
     });
 
 
@@ -733,4 +728,54 @@ const stringToHTML = function (str) {
 };
 const htmlToString = function (str) {
     return str.replace(/&amp;/g, "&").replace(/&gt;/g, ">").replace(/&lt;/g, "<").replace(/&quot;/g, "\"").replace(/&#039;/g, "\'");
+};
+
+
+let test = () => {
+    let responseCode = 200;
+    let response = '';
+    let resultJSON = {};
+    let resultarr = [];
+    let result;
+    let project_id = '';
+    let role_id = '816bfee1209922c1fd3e';
+    loginDataCasting.getConnection(async (err, connection) => {
+        if (err) {
+            reject(err);
+        }
+        if (project_id.length === 0) {
+            if (role_id.length === 0) {
+                result = await getAllAvailableRoles(connection);
+            } else {
+                result = await getSpecificRole(connection, role_id);
+            }
+        } else {
+            if (role_id.length === 0) {
+                result = await getRolesForProject(connection, project_id);
+            } else {
+                result = await getRoleForSpecificProject(connection, project_id, role_id);
+            }
+        }
+
+        let i = 0;
+            result.forEach(element => {
+                resultarr.push({
+                    _id: i.toString(),
+                    role_id: element.role_id,
+                    project_id: element.project_id,
+                    role_name: element.role_name,
+                    role_type: element.role_type,
+                    remote: element.remote,
+                    gender: element.gender,
+                    age_range: element.age_range,
+                    ethnicity: element.ethnicity,
+                    skills: element.skills
+                });
+                i++;
+            });
+            resultJSON.resultarr = resultarr;
+            response = JSON.stringify(resultJSON);
+            console.table(response);
+    });
+
 };
