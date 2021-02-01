@@ -457,6 +457,7 @@ function getSpecificRole(connection, role_id) {
                 reject(err);
             }
             connection.release();
+            console.table(result);
             resolve(result);
 
         })
@@ -475,6 +476,7 @@ function getRolesForProject(connection, project_id) {
                 reject(err);
             }
             connection.release();
+            console.table(result);
             resolve(result);
         })
     })
@@ -495,6 +497,7 @@ function getRoleForSpecificProject(connection, project_id, role_id) {
                 reject(err);
             }
             connection.release();
+            console.table(result);
             resolve(result);
         })
 
@@ -530,6 +533,7 @@ module.exports.getRole = (event, context, callback) => {
 
         let i = 0;
         Promise.all([result]).then((data) => {
+             console.table(data);
             data.forEach(element => {
                 resultarr.push({
                     _id: i.toString(),
