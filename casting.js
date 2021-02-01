@@ -431,6 +431,7 @@ module.exports.getAllJobs=(event, context, callback) => {
 function getSpecificRole(role_id) {
     let queryString = `select distinct ro.*
                        from roles ro where ro.role_id = '${role_id}'`;
+
     return new Promise((resolve, reject) => {
         loginDataCasting.getConnection((err, connection) => {
             if (err) {
@@ -441,10 +442,10 @@ function getSpecificRole(role_id) {
                     console.error(error);
                     reject(err);
                 }
-                resolve(result);
-            }).finally(() => {
                 connection.release();
-            });
+                resolve(result);
+
+            })
         });
     })
 }
@@ -463,10 +464,9 @@ function getRolesForProject(project_id) {
                     console.error(error);
                     reject(err);
                 }
-                resolve(result);
-            }).finally(() => {
                 connection.release();
-            });
+                resolve(result);
+            })
         });
     })
 }
@@ -488,10 +488,9 @@ function getRoleForSpecificProject(project_id, role_id) {
                     console.error(error);
                     reject(err);
                 }
-                resolve(result);
-            }).finally(() => {
                 connection.release();
-            });
+                resolve(result);
+            })
         });
     })
 }
