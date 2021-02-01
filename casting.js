@@ -527,36 +527,38 @@ module.exports.getRole = (event, context, callback) => {
                 result = getRoleForSpecificProject(connection, project_id, role_id);
             }
         }
+
+        let i = 0;
+        Promise.all([result]).then((data) => {
+            data.forEach(element => {
+                resultarr.push({
+                    _id: i.toString(),
+                    role_id: element.role_id,
+                    project_id: element.project_id,
+                    role_name: element.role_name,
+                    role_type: element.role_type,
+                    remote: element.remote,
+                    gender: element.gender,
+                    age_range: element.age_range,
+                    ethnicity: element.ethnicity,
+                    skills: element.skills
+                });
+                i++;
+            });
+            resultJSON.resultarr = resultarr;
+            response = JSON.stringify(resultJSON);
+        }).catch((err) => {
+            responseCode = 500;
+            throw err;
+        }).then(
+            callback(null, {
+                statusCode: responseCode,
+                body: response
+            })
+        );
     });
 
-    let i = 0;
-    Promise.all([result]).then((data) => {
-        data.forEach(element => {
-            resultarr.push({
-                _id: i.toString(),
-                role_id: element.role_id,
-                project_id: element.project_id,
-                role_name: element.role_name,
-                role_type: element.role_type,
-                remote: element.remote,
-                gender: element.gender,
-                age_range: element.age_range,
-                ethnicity: element.ethnicity,
-                skills: element.skills
-            });
-            i++;
-        });
-        resultJSON.resultarr = resultarr;
-        response = JSON.stringify(resultJSON);
-    }).catch((err) => {
-        responseCode = 500;
-        throw err;
-    }).then(
-        callback(null, {
-            statusCode: responseCode,
-            body: response
-        })
-    );
+
 };
 
 module.exports.applyToRole = (event, context, callback) => {
