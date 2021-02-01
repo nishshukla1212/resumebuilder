@@ -532,7 +532,6 @@ module.exports.getRole = (event, context, callback) => {
         }
 
         let i = 0;
-             console.table(data);
             result.forEach(element => {
                 resultarr.push({
                     _id: i.toString(),
