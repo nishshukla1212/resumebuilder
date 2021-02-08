@@ -568,7 +568,7 @@ module.exports.applyToRole = (event, context, callback) => {
     console.log(data[0]);
     let role_id = data[0].role_id;
     let project_id = data[0].project_id;
-    let submitted_user_id = data[0].userId;
+    let submitted_user_id = data[0].user_id;
     let casting_user_id = 'guest';
     queryString = `Insert into project_submissions (project_id, role_id, submitted_user_id, casting_user_id, u_dt, c_dt)`;
     let valueString = `Values ('${project_id}','${role_id}','${submitted_user_id}','${casting_user_id}',null,null)`
@@ -620,6 +620,63 @@ module.exports.applyToRole = (event, context, callback) => {
                         });
                     });
                 }
+            });
+        });
+    });
+};
+
+module.exports.getAllUserSubmissions = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+    let responseCode = 200;
+    let resultJSON = {};
+    let resultarr = [];
+    let response = '';
+    console.log(event);
+    let userID = event.queryStringParameters.role_id;
+    let queryString = `select distinct sp.c_uid, sp.first_name, sp.last_name, sp.email, sp.phone,sp.bio,sp.headshot_url_1,sp.headshot_url_2,sp.headshot_url_3,sp.headshot_url_4,sp.resume_url,sp.demo_reel_url from submission_profile sp where sp.user_id = '${userID}'`;
+    let i = 0;
+    console.log("connecting to db");
+    loginDataCasting.getConnection((err, connection) => {
+        if (err) {
+            responseCode = 500;
+            console.log(err);
+            throw err;
+        }
+        let queryPromise = new Promise((resolve, reject) => {
+            connection.query(queryString, function (err, result, fields) {
+                if (err) {
+                    responseCode = 500;
+                    console.log(err);
+                    reject(err);
+                }
+                result.forEach(element => {
+                    resultarr.push({
+                        _id: i.toString(),
+                        c_uid: element.c_uid,
+                        first_name: element.first_name,
+                        last_name: element.last_name,
+                        email: element.email,
+                        phone: element.phone,
+                        bio: element.bio,
+                        headshot_url_1: element.headshot_url_1,
+                        headshot_url_2: element.headshot_url_2,
+                        headshot_url_3: element.headshot_url_3,
+                        headshot_url_4: element.headshot_url_4,
+                        resume_url: element.resume_url,
+                        demo_reel_url: element.demo_reel_url
+                    });
+                    i++;
+                });
+                resultJSON.resultarr = resultarr;
+                response = JSON.stringify(resultJSON);
+                connection.release();
+                resolve(response);
+            });
+        });
+        queryPromise.then((values) => {
+            callback(null, {
+                statusCode: responseCode,
+                body: values
             });
         });
     });
