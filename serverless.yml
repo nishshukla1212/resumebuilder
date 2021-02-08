@@ -228,9 +228,7 @@ functions:
     events:
       - http:
           path: /applyToRole
-          method: get
-          request:
-            parameters: true
+          method: post
 
 resources: # CloudFormation template syntax from here on.
   Resources:

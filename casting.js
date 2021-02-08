@@ -563,53 +563,68 @@ module.exports.applyToRole = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
     let responseCode = 200;
     let response = '';
-    let resultJSON = {};
-    let resultarr = [];
-    let result;
-    let project_id = undefined !== event.queryStringParameters.project_id ? event.queryStringParameters.project_id : '';
-    let role_id = undefined !== event.queryStringParameters.role_id ? event.queryStringParameters.role_id : '';
-    if (project_id.length === 0) {
-        if (role_id.length === 0) {
-            result = getAllAvailableRoles();
-        } else {
-            result = getSpecificRole(role_id);
-        }
-    } else {
-        if (role_id.length === 0) {
-            result = getRolesForProject(project_id);
-        } else {
-            result = getRoleForSpecificProject(project_id, role_id);
-        }
-    }
-    let i = 0;
-    Promise.all([result]).then((data) => {
-        data.forEach(element => {
-            resultarr.push({
-                _id: i.toString(),
-                role_id: element.role_id,
-                project_id: element.project_id,
-                role_name: element.role_name,
-                role_type: element.role_type,
-                remote: element.remote,
-                gender: element.gender,
-                age_range: element.age_range,
-                ethnicity: element.ethnicity,
-                skills: element.skills
+    let queryString = '';
+    const data = JSON.parse(event.body);
+    console.log(data[0]);
+    let role_id = data[0].role_id;
+    let project_id = data[0].project_id;
+    let submitted_user_id = data[0].userId;
+    let casting_user_id = 'guest';
+    queryString = `Insert into project_submissions (project_id, role_id, submitted_user_id, casting_user_id, u_dt, c_dt)`;
+    let valueString = `Values ('${project_id}','${role_id}','${submitted_user_id}','${casting_user_id}',null,null)`
+
+    queryString = queryString + ' ' + valueString;
+    console.log(queryString);
+
+    let initialQueryString = `select count(*) as COUNT from project_submissions ps where ps.project_id = '${project_id}'
+    and ps.role_id = '${role_id}' and ps.submitted_user_id = '${submitted_user_id}' and ps.casting_user_id = '${casting_user_id}'`
+    loginDataCasting.getConnection((err, connection) => {
+        connection.query(initialQueryString, function (err, result, fields) {
+            if (err) {
+                responseCode = 500;
+                throw err;
+            }
+            result.forEach(element => {
+                console.log(element);
+                if (element.COUNT > 0) {
+                    let deleteQueryString = `delete from project_submissions ps  where ps.project_id = '${project_id}'
+    and ps.role_id = '${role_id}' and ps.submitted_user_id = '${submitted_user_id}' and ps.casting_user_id = '${casting_user_id}'`
+                    connection.query(deleteQueryString, function (err, result, fields) {
+                        if (err) {
+                            responseCode = 500;
+                            throw err;
+                        }
+                        console.log(result);
+                        connection.query(queryString, function (err, result, fields) {
+                            if (err) {
+                                responseCode = 500;
+                                throw err;
+                            }
+                            connection.release();
+                            callback(null, {
+                                statusCode: responseCode,
+                                body: response
+                            });
+                        });
+                    });
+                } else {
+                    connection.query(queryString, function (err, result, fields) {
+                        if (err) {
+                            responseCode = 500;
+                            throw err;
+                        }
+                        connection.release();
+                        callback(null, {
+                            statusCode: responseCode,
+                            body: response
+                        });
+                    });
+                }
             });
-            i++;
         });
-        resultJSON.resultarr = resultarr;
-        response = JSON.stringify(resultJSON);
-    }).catch((err) => {
-        responseCode = 500;
-        throw err;
-    }).then(
-        callback(null, {
-            statusCode: responseCode,
-            body: response
-        })
-    );
+    });
 };
+
 
 module.exports.getProfile = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
