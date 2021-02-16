@@ -539,6 +539,7 @@ module.exports.getRole = (event, context, callback) => {
                     project_id: element.project_id,
                     role_name: element.role_name,
                     role_type: element.role_type,
+                    role_description: element.role_description,
                     remote: element.remote,
                     gender: element.gender,
                     age_range: element.age_range,
@@ -552,7 +553,7 @@ module.exports.getRole = (event, context, callback) => {
             callback(null, {
                 statusCode: responseCode,
                 body: response
-            })
+            });
 
     });
 
