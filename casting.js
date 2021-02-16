@@ -5,7 +5,7 @@ const options = require('./options');
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
 const hash = require('object-hash');
-const mailchimpClient = require("mailchimp_transactional")("119eb1b5e858d6d59fbbe01353c0ab12-us7");
+const mailchimpClient =  require('@mailchimp/mailchimp_transactional')("119eb1b5e858d6d59fbbe01353c0ab12-us7");
 
 
 const mysqlOptions = {
