@@ -5,6 +5,8 @@ const options = require('./options');
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
 const hash = require('object-hash');
+const mailchimpClient = require("mailchimp_transactional")("119eb1b5e858d6d59fbbe01353c0ab12-us7");
+
 
 const mysqlOptions = {
     host: options.storageConfig.host,
@@ -21,6 +23,11 @@ const loginDataCasting = mysql.createPool({
     password: options.storageConfig.password,
     database: options.storageConfig.databaseCasting
 });
+
+const FROM_EMAIL="contact@weareactors.com";
+const FROM_NAME="We Are Actors";
+const CASTING_SUBJECT="Your project has a new submission";
+const USER_SUBMISSION_SUBJECT="Thank you for your submission";
 
 module.exports.insertProfile = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
@@ -560,6 +567,55 @@ module.exports.getRole = (event, context, callback) => {
 
 };
 
+async function getUserEmail(submitted_user_id) {
+    let queryString = `select email from submission_profile where c_uid = ${submitted_user_id}`;
+    console.log(queryString);
+    return new Promise(resolve => {
+    loginDataCasting.getConnection((err, connection) => {
+        connection.query(queryString, function (err, result, fields) {
+            if (err) {
+                throw err;
+            }
+            result.forEach(element => {
+                console.log(element);
+                resolve(element.email);
+            });
+        });
+    });
+    });
+}
+
+async function getCastingUserEmail(casting_user_id) {
+
+}
+
+async function sendConfirmationEmail(submitted_user_id, casting_user_id) {
+
+    let userToEmail=await getUserEmail(submitted_user_id);
+    let castUserToEmail="nish.12.shukla@gmail.com"
+
+    const response = await mailchimpClient.messages.send({ message: {
+            text:"",
+            subject:USER_SUBMISSION_SUBJECT,
+            from_email:FROM_EMAIL,
+            from_name:FROM_NAME,
+            to:[userToEmail]
+        }
+    });
+    console.log(response);
+
+    const response2 = await mailchimpClient.messages.send({ message: {
+            text:"",
+            subject:CASTING_SUBJECT,
+            from_email:FROM_EMAIL,
+            from_name:FROM_NAME,
+            to:[castUserToEmail]
+
+        }
+    });
+    console.log(response2);
+}
+
 module.exports.applyToRole = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false;
     let responseCode = 200;
@@ -615,9 +671,11 @@ module.exports.applyToRole = (event, context, callback) => {
                             throw err;
                         }
                         connection.release();
-                        callback(null, {
-                            statusCode: responseCode,
-                            body: response
+                        sendConfirmationEmail(submitted_user_id,casting_user_id).then(()=>{
+                            callback(null, {
+                                statusCode: responseCode,
+                                body: response
+                            });
                         });
                     });
                 }

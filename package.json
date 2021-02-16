@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mailchimp/mailchimp_transactional": "^1.0.21",
     "aws-sdk": "^2.700.0",
     "carbone-sdk": "^1.0.0",
     "chrome-aws-lambda": "^3.1.1",
